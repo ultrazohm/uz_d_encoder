@@ -39,7 +39,7 @@ PrefsRevisionGUID=
 
 [Document1]
 DocumentPath=Interface connector.SchDoc
-AnnotationEnabled=1
+AnnotationEnabled=0
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
 AnnotateSuffix=
@@ -56,7 +56,7 @@ DocumentUniqueId=VIPPPEUO
 
 [Document2]
 DocumentPath=Analog Hall.SchDoc
-AnnotationEnabled=1
+AnnotationEnabled=0
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
 AnnotateSuffix=
@@ -107,7 +107,7 @@ DocumentUniqueId=XHTMPVYP
 
 [Document5]
 DocumentPath=ADC_AH.SchDoc
-AnnotationEnabled=1
+AnnotationEnabled=0
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
 AnnotateSuffix=
@@ -124,7 +124,7 @@ DocumentUniqueId=GNPFFUOF
 
 [Document6]
 DocumentPath=Opamp_AH.SchDoc
-AnnotationEnabled=1
+AnnotationEnabled=0
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
 AnnotateSuffix=
@@ -141,7 +141,7 @@ DocumentUniqueId=YHNQRNYA
 
 [Document7]
 DocumentPath=TopSheet.SchDoc
-AnnotationEnabled=1
+AnnotationEnabled=0
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
 AnnotateSuffix=
@@ -157,25 +157,8 @@ GenerateClassCluster=0
 DocumentUniqueId=OGEKNJFP
 
 [Document8]
-DocumentPath=Temp Measurement.SchDoc
-AnnotationEnabled=1
-AnnotateStartValue=1
-AnnotationIndexControlEnabled=0
-AnnotateSuffix=
-AnnotateScope=All
-AnnotateOrder=16
-DoLibraryUpdate=1
-DoDatabaseUpdate=1
-ClassGenCCAutoEnabled=1
-ClassGenCCAutoRoomEnabled=1
-ClassGenNCAutoScope=None
-DItemRevisionGUID=
-GenerateClassCluster=0
-DocumentUniqueId=XDDPWOYR
-
-[Document9]
 DocumentPath=Absolute Encoder.SchDoc
-AnnotationEnabled=1
+AnnotationEnabled=0
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
 AnnotateSuffix=
@@ -190,43 +173,9 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=VIJSXQKH
 
-[Document10]
-DocumentPath=Slow ADC.SchDoc
-AnnotationEnabled=1
-AnnotateStartValue=1
-AnnotationIndexControlEnabled=0
-AnnotateSuffix=
-AnnotateScope=All
-AnnotateOrder=14
-DoLibraryUpdate=1
-DoDatabaseUpdate=1
-ClassGenCCAutoEnabled=1
-ClassGenCCAutoRoomEnabled=1
-ClassGenNCAutoScope=None
-DItemRevisionGUID=
-GenerateClassCluster=0
-DocumentUniqueId=FLKPYOLV
-
-[Document11]
-DocumentPath=Opamp_Temp.SchDoc
-AnnotationEnabled=1
-AnnotateStartValue=1
-AnnotationIndexControlEnabled=0
-AnnotateSuffix=
-AnnotateScope=All
-AnnotateOrder=10
-DoLibraryUpdate=1
-DoDatabaseUpdate=1
-ClassGenCCAutoEnabled=1
-ClassGenCCAutoRoomEnabled=1
-ClassGenNCAutoScope=None
-DItemRevisionGUID=
-GenerateClassCluster=0
-DocumentUniqueId=IBHOAEKQ
-
-[Document12]
+[Document9]
 DocumentPath=Digital Interfaces.SchDoc
-AnnotationEnabled=1
+AnnotationEnabled=0
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
 AnnotateSuffix=
@@ -241,26 +190,9 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=AMVNUGAM
 
-[Document13]
-DocumentPath=PowerSupplies Temperature.SchDoc
-AnnotationEnabled=1
-AnnotateStartValue=1
-AnnotationIndexControlEnabled=0
-AnnotateSuffix=
-AnnotateScope=All
-AnnotateOrder=12
-DoLibraryUpdate=1
-DoDatabaseUpdate=1
-ClassGenCCAutoEnabled=1
-ClassGenCCAutoRoomEnabled=1
-ClassGenNCAutoScope=None
-DItemRevisionGUID=
-GenerateClassCluster=0
-DocumentUniqueId=LMEVAFIQ
-
-[Document14]
+[Document10]
 DocumentPath=Resolver.SchDoc
-AnnotationEnabled=1
+AnnotationEnabled=0
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
 AnnotateSuffix=
@@ -275,9 +207,9 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=ULOAWBMK
 
-[Document15]
+[Document11]
 DocumentPath=Input Mode Selector.SchDoc
-AnnotationEnabled=1
+AnnotationEnabled=0
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
 AnnotateSuffix=
@@ -292,9 +224,9 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=OXVKVNVR
 
-[Document16]
+[Document12]
 DocumentPath=Power Supplies.SchDoc
-AnnotationEnabled=1
+AnnotationEnabled=0
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
 AnnotateSuffix=
@@ -309,9 +241,9 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=PJYQJKKQ
 
-[Document17]
+[Document13]
 DocumentPath=Buffer_EXC.SchDoc
-AnnotationEnabled=1
+AnnotationEnabled=0
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
 AnnotateSuffix=
@@ -326,9 +258,9 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=LOPHOCDG
 
-[Document18]
+[Document14]
 DocumentPath=Impedance converter.SchDoc
-AnnotationEnabled=1
+AnnotationEnabled=0
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
 AnnotateSuffix=
@@ -343,7 +275,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=NVCHRWOD
 
-[Document19]
+[Document15]
 DocumentPath=Samtec.PcbLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -360,7 +292,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=GJWLYVAS
 
-[Document20]
+[Document16]
 DocumentPath=Samtec.SCHLIB
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -377,7 +309,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document21]
+[Document17]
 DocumentPath=UltraZOhm_CarrierBoard.PcbLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -394,7 +326,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document22]
+[Document18]
 DocumentPath=UltraZOhm_CarrierBoard.SchLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -411,7 +343,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document23]
+[Document19]
 DocumentPath=AD_AD2S1210.PcbLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -428,7 +360,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document24]
+[Document20]
 DocumentPath=AD_AD2S1210.SchLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -445,7 +377,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document25]
+[Document21]
 DocumentPath=Output.OutJob
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -462,7 +394,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document26]
+[Document22]
 DocumentPath=UltraZohm_Digital_Sensor_Board_v1.01.PcbDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
