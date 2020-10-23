@@ -416,6 +416,20 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=EUTONNES
 
+[ProjectVariant1]
+UniqueID=DEA579C1-F13A-4404-88DC-B21BB890963B
+Description=Default
+AllowFabrication=0
+ParameterCount=0
+VariationCount=6
+Variation1=Designator=R174|UniqueId=\JBONGCLS\UYQHEXIE|Kind=1|AlternatePart= 
+Variation2=Designator=R173|UniqueId=\JBONGCLS\TDOSPFGV|Kind=1|AlternatePart= 
+Variation3=Designator=R129|UniqueId=\JBONGCLS\QAJGRNDD|Kind=1|AlternatePart= 
+Variation4=Designator=R131|UniqueId=\JBONGCLS\BTBIBFPP|Kind=1|AlternatePart= 
+Variation5=Designator=R161|UniqueId=\JBONGCLS\KJABEKLB|Kind=1|AlternatePart= 
+Variation6=Designator=R162|UniqueId=\JBONGCLS\STSPACCK|Kind=1|AlternatePart= 
+ParamVariationCount=0
+
 [Parameter1]
 Name=AuthorParam
 Value=Thomas Effenberger
