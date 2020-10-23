@@ -16,7 +16,7 @@ AllowPortNetNames=0
 AllowSheetEntryNetNames=1
 AppendSheetNumberToLocalNets=0
 NetlistSinglePinNets=0
-DefaultConfiguration=
+DefaultConfiguration=Sources
 UserID=0xFFFFFFFF
 DefaultPcbProtel=1
 DefaultPcbPcad=0
@@ -417,6 +417,10 @@ GenerateClassCluster=0
 DocumentUniqueId=EUTONNES
 
 [Parameter1]
+Name=AuthorParam
+Value=Thomas Effenberger
+
+[Parameter2]
 Name=ProjectRevision
 Value=1v01
 
