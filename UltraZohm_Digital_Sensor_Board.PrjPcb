@@ -16,7 +16,7 @@ AllowPortNetNames=0
 AllowSheetEntryNetNames=1
 AppendSheetNumberToLocalNets=0
 NetlistSinglePinNets=0
-DefaultConfiguration=Default Configuration
+DefaultConfiguration=
 UserID=0xFFFFFFFF
 DefaultPcbProtel=1
 DefaultPcbPcad=0
@@ -36,6 +36,11 @@ IncludeDesignInRelease=0
 [Preferences]
 PrefsVaultGUID=
 PrefsRevisionGUID=
+
+[Release]
+ReleaseTarget=1
+ReleaseFolderPath=[OutputPath]
+ReleaseZipPath=[OutputPath][ProjectName].zip
 
 [Document1]
 DocumentPath=Interface connector.SchDoc
@@ -416,14 +421,34 @@ Name=ProjectRevision
 Value=1v01
 
 [Configuration1]
-Name=Default Configuration
+Name=Sources
 ParameterCount=0
 ConstraintFileCount=0
 ReleaseItemId=
 Variant=[No Variations]
 OutputJobsCount=0
-ContentTypeGUID=
-ConfigurationType=
+ContentTypeGUID=CB6F2064-E317-11DF-B822-12313F0024A2
+ConfigurationType=Source
+
+[Configuration2]
+Name=Fabrication
+ParameterCount=0
+ConstraintFileCount=0
+ReleaseItemId=
+Variant=[No Variations]
+OutputJobsCount=0
+ContentTypeGUID=0C520D2A-E60C-11DF-B822-12313F0024A2
+ConfigurationType=Fabrication
+
+[Configuration3]
+Name=Assembly
+ParameterCount=0
+ConstraintFileCount=0
+ReleaseItemId=
+Variant=[No Variations]
+OutputJobsCount=0
+ContentTypeGUID=0D12F8DC-E60C-11DF-B822-12313F0024A2
+ConfigurationType=Assembly
 
 [Generic_EDE]
 OutputDir=
