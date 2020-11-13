@@ -1,0 +1,8 @@
+Power Supply Testpoints
+
+TP14:	VIN
+TP16:	5V (VCC)
+TP17:	2.5V (OVCC)
+TP18:	- (VREF)
+TP19:	12V (+12V)
+TP20:	- (VCOM)
