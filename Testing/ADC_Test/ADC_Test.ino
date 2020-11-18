@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Test routines for resolver chip AD2S1210
+ * Test routines for ADC chip LTC231116
  *
  * Thomas Effenberger, 2020
  * 
@@ -35,7 +35,10 @@ void setup()
     digitalWrite(N_CVN, 0);
 }
 
-uint16_t LTC231116_read()
+/** Returns 16bit analog data from LTC231116
+ * Automatically wakes device if in nap or sleep mode
+ */
+int16_t LTC231116_read()
 {
     digitalWrite(N_CVN, 1);
     
@@ -48,10 +51,31 @@ uint16_t LTC231116_read()
     uint8_t val1 = SPI.transfer(0x00);
     uint8_t val2 = SPI.transfer(0x00);
 
-    return (val1 << 8) | val2;
+    return (int16_t) ((val1 << 8) | val2);
 }
 
+/** Puts device in nap mode by pulsing N_CVN twice
+ * Wake up with positive edge on SCK or by calling LTC231116_read()
+ */
+void LTC231116_NapMode()
+{
+    digitalWrite(N_CVN, 1);
+    delayMicroseconds(T_ACQ);
+    digitalWrite(N_CVN, 0);
+    delayMicroseconds(T_ACQ);
+    digitalWrite(N_CVN, 1);
+    delayMicroseconds(T_ACQ);
+    digitalWrite(N_CVN, 0);
+}
 
+/** Puts device in sleep mode by pulsing N_CVN four times
+ * Wake up with positive edge on SCK or by calling LTC231116_read()
+ */
+void LTC231116_SleepMode()
+{
+    LTC231116_NapMode();
+    LTC231116_NapMode();
+}
 
 void loop()
 {
