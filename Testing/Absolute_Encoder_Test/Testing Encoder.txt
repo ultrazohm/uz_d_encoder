@@ -1,0 +1,13 @@
+8.5863.1234.G721
+
+8.5863	Type
+.
+1	Flange: with spring element, long, IP65
+2	Throug hollow shaft: ? (not specified)
+3	Interface/Power supply: 3, SSI, BiSS + 2048 ppr. SinCos / 5 V DC
+4	Type of connection: Radial M23 connector, 12-pi
+.
+G	Code: SSI, gray
+7	Resolution: 17 bit ST + 12 bit MT
+2	
+1	Option (service): no option
