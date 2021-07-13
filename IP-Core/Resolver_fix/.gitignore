@@ -1,0 +1,7 @@
+#ignore everything inside this folder but the board file and vhdl file
+*.cache
+*.hbs
+*.hw
+*.ip*
+*.runs
+*.sim
