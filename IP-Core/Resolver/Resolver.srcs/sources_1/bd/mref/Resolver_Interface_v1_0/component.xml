@@ -255,7 +255,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>19b3fb16</spirit:value>
+            <spirit:value>181c15bb</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -268,7 +268,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>19b3fb16</spirit:value>
+            <spirit:value>181c15bb</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -348,7 +348,7 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
-        <spirit:name>error_flag</spirit:name>
+        <spirit:name>error</spirit:name>
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
           <spirit:wireTypeDefs>
@@ -772,7 +772,7 @@
       <spirit:modelParameter xsi:type="spirit:nameValueTypeType" spirit:dataType="INTEGER">
         <spirit:name>SPI_clk_div</spirit:name>
         <spirit:displayName>Spi Clk Div</spirit:displayName>
-        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.SPI_clk_div">50</spirit:value>
+        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.SPI_clk_div">4</spirit:value>
       </spirit:modelParameter>
       <spirit:modelParameter spirit:dataType="integer">
         <spirit:name>C_S00_AXI_DATA_WIDTH</spirit:name>
@@ -809,7 +809,7 @@
     <spirit:parameter>
       <spirit:name>SPI_clk_div</spirit:name>
       <spirit:displayName>Spi Clk Div</spirit:displayName>
-      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.SPI_clk_div">50</spirit:value>
+      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.SPI_clk_div">4</spirit:value>
     </spirit:parameter>
     <spirit:parameter>
       <spirit:name>C_S00_AXI_DATA_WIDTH</spirit:name>
@@ -841,7 +841,7 @@
         <xilinx:designToolContext>IPI</xilinx:designToolContext>
       </xilinx:designToolContexts>
       <xilinx:coreRevision>1</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2021-07-23T14:16:29Z</xilinx:coreCreationDateTime>
+      <xilinx:coreCreationDateTime>2021-07-30T13:34:17Z</xilinx:coreCreationDateTime>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2020.1</xilinx:xilinxVersion>

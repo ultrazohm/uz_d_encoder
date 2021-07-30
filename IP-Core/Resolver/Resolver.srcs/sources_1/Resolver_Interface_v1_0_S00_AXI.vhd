@@ -5,7 +5,7 @@ use ieee.numeric_std.all;
 entity Resolver_Interface_v1_0_S00_AXI is
 	generic (
 		-- Users to add parameters here
-        SPI_clk_div			: INTEGER	:=  2 ;
+        SPI_clk_div			: INTEGER	:=  4 ;    -- SPI clock divider (25MHz)
 		-- User parameters ends
 		-- Do not modify the parameters beyond this line
 
@@ -17,18 +17,17 @@ entity Resolver_Interface_v1_0_S00_AXI is
 	port (
 		-- Users to add ports here
 
-        SPI_MOSI				: OUT	 STD_LOGIC;					-- SPI-Port
-		SPI_MISO				: IN	 STD_LOGIC;	
-		SPI_SCLK				: OUT	 STD_LOGIC;	
-		SPI_SS					: OUT	 STD_LOGIC;
-        busy	                : OUT    STD_LOGIC;
-		error_flag              : OUT    STD_LOGIC;
-
-        AD2S1210_n_reset        : OUT   STD_LOGIC;                  -- Reset (connect to chip)
-        AD2S1210_n_sample       : OUT   STD_LOGIC;                  -- Sample start (connect to chip)
-        AD2S1210_n_fsync        : OUT   STD_LOGIC;                  -- Synchronization signal (connect to chip)
-        AD2S1210_mode_A0        : OUT   STD_LOGIC;                  -- Mode select 0 (connect to chip)
-        AD2S1210_mode_A1        : OUT   STD_LOGIC;                  -- Mode select 1 (connect to chip)
+        SPI_MOSI                : OUT STD_LOGIC;   -- SPI master out (connect to chip)
+		SPI_MISO                : IN  STD_LOGIC;   -- SPI master in (connect to chip)
+		SPI_SCLK                : OUT STD_LOGIC;   -- SPI clock (connect to chip)
+		SPI_SS                  : OUT STD_LOGIC;   -- SPI slave select (connect to chip)
+        busy_m                  : OUT STD_LOGIC;   -- busy / data ready signal
+		error_flag_m            : OUT STD_LOGIC;   -- error occurred, reset needed
+        AD2S1210_n_reset        : OUT STD_LOGIC;   -- reset (connect to chip)
+        AD2S1210_n_sample       : OUT STD_LOGIC;   -- sample start (connect to chip)
+        AD2S1210_n_fsync        : OUT STD_LOGIC;   -- synchronization signal (connect to chip)
+        AD2S1210_mode_A0        : OUT STD_LOGIC;   -- mode select 0 (connect to chip)
+        AD2S1210_mode_A1        : OUT STD_LOGIC;   -- mode select 1 (connect to chip)
 
 		-- User ports ends
 		-- Do not modify the ports beyond this line
@@ -131,10 +130,10 @@ architecture arch_imp of Resolver_Interface_v1_0_S00_AXI is
 	signal byte_index	: integer;
 	signal aw_en	: std_logic;
 	
-	--Signals to map the compoents--------------------------------------------------------
-	signal enable  				: STD_LOGIC;                    --System enable
-    signal go_sig				: STD_LOGIC;					--global Trigger
-    signal handlerreset         : STD_LOGIC;
+	--Signals to map the components--------------------------------------------------------
+	signal enable_s  			: STD_LOGIC;                    --System enable
+    signal go_sig_s				: STD_LOGIC;					--global Trigger
+    signal reset_n_s            : STD_LOGIC;
     
     signal busy_s		        : STD_LOGIC;
     signal error_flag_s		    : STD_LOGIC;					--Error occured, need reset
@@ -155,39 +154,38 @@ architecture arch_imp of Resolver_Interface_v1_0_S00_AXI is
 	--Components---------------------------------------------------------------------
 	component AD2S1210_Interface is
 		Generic(
-			SPI_Datalength          : INTEGER   :=  8;                  -- Wortlänge SPI
-			SPI_Slavenumber         : INTEGER   :=  1;                  -- sollte auf 1 bleiben
-			SPI_cpha                : STD_LOGIC := '1';                 -- Clock-Phase SPI
-			SPI_cpol                : STD_LOGIC := '0';                 -- Clock-Polarität SPI
-			SPI_cont                : STD_LOGIC := '0';                 -- continuierlicher Modus SPI
-			SPI_clk_div             : INTEGER   :=  2                   -- Taktteiler SPIs
+			SPI_Datalength     : INTEGER   :=  8;                    -- SPI data length
+			SPI_Slavenumber    : INTEGER   :=  1;                    -- number of SPI slaves
+			SPI_cpha           : STD_LOGIC := '1';                   -- SPI clock phase
+			SPI_cpol           : STD_LOGIC := '0';                   -- SPI clock polarity
+			SPI_cont           : STD_LOGIC := '0';                   -- SPI continuous mode
+			SPI_clk_div        : INTEGER   :=  4                     -- SPI clock divider (25MHz)
 		);
 		Port (
-			clock                   : IN    STD_LOGIC;                  -- System clock
-			reset_n                 : IN    STD_LOGIC;                  -- Synchronous reset
-			enable                  : IN    STD_LOGIC;                  -- System enable
-			go_sig                  : IN    STD_LOGIC;                  -- Global Trigger
-			busy                    : OUT   STD_LOGIC;                  -- busy / data ready signal
-			error_flag              : OUT   STD_LOGIC;                  -- Error occured, need reset
-			dataMode                : IN    STD_LOGIC;                  -- 0 = position mode, 1 = velocity mode
-			configMode              : IN    STD_LOGIC;                  -- if configMode = 1, dataMode is ignored
-			register_rw             : IN    STD_LOGIC;                  -- 0 = read register, 1 = write register
-			register_adr_in         : IN    STD_LOGIC_VECTOR (7 downto 0);  -- Register address
-			register_val_in         : IN    STD_LOGIC_VECTOR (7 downto 0);  -- Value to write to register
-			register_val_out        : OUT   STD_LOGIC_VECTOR (7 downto 0);  -- Read value from register
-			data_out                : OUT   STD_LOGIC_VECTOR (15 downto 0); -- Read value in normal mode
+			clock              : IN  STD_LOGIC;                      -- system clock
+			reset_n            : IN  STD_LOGIC;                      -- synchronous reset
+			enable             : IN  STD_LOGIC;                      -- system enable
+			go_sig             : IN  STD_LOGIC;                      -- global trigger
+			busy               : OUT STD_LOGIC;                      -- busy / data ready signal
+			error_flag         : OUT STD_LOGIC;                      -- error occured, need reset
+			dataMode           : IN  STD_LOGIC;                      -- 0 = position mode, 1 = velocity mode
+			configMode         : IN  STD_LOGIC;                      -- if configMode = 1, dataMode is ignored
+			register_rw        : IN  STD_LOGIC;                      -- 0 = read register, 1 = write register
+			register_adr_in    : IN  STD_LOGIC_VECTOR (7 downto 0);  -- register address
+			register_val_in    : IN  STD_LOGIC_VECTOR (7 downto 0);  -- value to write to register
+			register_val_out   : OUT STD_LOGIC_VECTOR (7 downto 0);  -- read value from register
+			data_out           : OUT STD_LOGIC_VECTOR (15 downto 0); -- read value in normal mode
 			--
-			SPI_MOSI                : OUT   STD_LOGIC;                  -- SPI-Port
-			SPI_MISO                : IN    STD_LOGIC;
-			SPI_SCLK                : OUT   STD_LOGIC;
-			SPI_SS                  : OUT   STD_LOGIC;
+			SPI_MOSI           : OUT STD_LOGIC;                      -- SPI master out (connect to chip)
+			SPI_MISO           : IN  STD_LOGIC;                      -- SPI master in (connect to chip)
+			SPI_SCLK           : OUT STD_LOGIC;                      -- SPI clock (connect to chip)
+			SPI_SS             : OUT STD_LOGIC;                      -- SPI slave select (connect to chip)
 			--
-			AD2S1210_n_reset        : OUT   STD_LOGIC;                  -- Reset (connect to chip)
-			AD2S1210_n_sample       : OUT   STD_LOGIC;                  -- Sample start (connect to chip)
-			AD2S1210_n_fsync        : OUT   STD_LOGIC;                  -- Synchronization signal (connect to chip)
-			AD2S1210_mode_A0        : OUT   STD_LOGIC;                  -- Mode select 0 (connect to chip)
-			AD2S1210_mode_A1        : OUT   STD_LOGIC                   -- Mode select 1 (connect to chip)
-			--
+			AD2S1210_n_reset   : OUT STD_LOGIC;                      -- reset (connect to chip)
+			AD2S1210_n_sample  : OUT STD_LOGIC;                      -- sample start (connect to chip)
+			AD2S1210_n_fsync   : OUT STD_LOGIC;                      -- synchronization signal (connect to chip)
+			AD2S1210_mode_A0   : OUT STD_LOGIC;                      -- mode select 0 (connect to chip)
+			AD2S1210_mode_A1   : OUT STD_LOGIC                       -- mode select 1 (connect to chip)
 		);
 	end component AD2S1210_Interface;
 
@@ -427,13 +425,20 @@ begin
 	    loc_addr := axi_araddr(ADDR_LSB + OPT_MEM_ADDR_BITS downto ADDR_LSB);
 	    case loc_addr is
 	      when b"00" =>
-	        reg_data_out <= b"0000000000000000000000000000000" & error_flag_s;
+			reg_data_out(0) <= enable_s;
+			reg_data_out(1) <= go_sig_s;
+			reg_data_out(2) <= busy_s;
+			reg_data_out(3) <= error_flag_s;
+			reg_data_out(4) <= dataMode_s;
+			reg_data_out(5) <= configMode_s;
+			reg_data_out(6) <= register_rw_s;
+			reg_data_out(7) <= reset_n_s;
 	      when b"01" =>
-	        reg_data_out <= slv_reg1;
+	        reg_data_out(15 downto 0) <= data_out_s;
 	      when b"10" =>
-	        reg_data_out <= slv_reg2;
+	        reg_data_out(7 downto 0) <= register_adr_in_s;
 	      when b"11" =>
-	        reg_data_out <= x"AFFEAFFE";
+	        reg_data_out <= (others => '0');
 	      when others =>
 	        reg_data_out  <= (others => '0');
 	    end case;
@@ -462,61 +467,77 @@ begin
 
 	AD2S1210_Handler_1 : AD2S1210_Interface
 	Generic map(
-	    SPI_clk_div              => SPI_clk_div
+		SPI_clk_div            => SPI_clk_div
 	)
 	Port map(
-		clock   				=> S_AXI_ACLK,
-		reset_n 				=> handlerreset,
-		enable  				=> enable,
-		go_sig					=> go_sig,
-		busy    				=> busy_s,
-		error_flag				=> error_flag_s,
-		dataMode                => dataMode_s,
-		configMode              => configMode_s,
-		register_rw             => register_rw_s,
-		register_adr_in         => register_adr_in_s,
-		register_val_in         => register_val_in_s,
-		register_val_out        => register_val_out_s,
-		data_out                => data_out_s,
-        AD2S1210_n_reset        => AD2S1210_n_reset,
-        AD2S1210_n_sample       => AD2S1210_n_sample,
-        AD2S1210_n_fsync        => AD2S1210_n_fsync,
-        AD2S1210_mode_A0        => AD2S1210_mode_A0,
-        AD2S1210_mode_A1        => AD2S1210_mode_A1,
+		clock                  => S_AXI_ACLK,
+		reset_n                => reset_n_s,
+		enable                 => enable_s,
+		go_sig                 => go_sig_s,
+		busy                   => busy_s,
+		error_flag             => error_flag_s,
+		dataMode               => dataMode_s,
+		configMode             => configMode_s,
+		register_rw            => register_rw_s,
+		register_adr_in        => register_adr_in_s,
+		register_val_in        => register_val_in_s,
+		register_val_out       => register_val_out_s,
+		data_out               => data_out_s,
 		--
-		SPI_MOSI				=> SPI_MOSI,
-		SPI_MISO				=> SPI_MISO,
-		SPI_SCLK				=> SPI_SCLK,
-		SPI_SS					=> SPI_SS
+		AD2S1210_n_reset       => AD2S1210_n_reset,
+		AD2S1210_n_sample      => AD2S1210_n_sample,
+		AD2S1210_n_fsync       => AD2S1210_n_fsync,
+		AD2S1210_mode_A0       => AD2S1210_mode_A0,
+		AD2S1210_mode_A1       => AD2S1210_mode_A1,
+		--
+		SPI_MOSI               => SPI_MOSI,
+		SPI_MISO               => SPI_MISO,
+		SPI_SCLK               => SPI_SCLK,
+		SPI_SS                 => SPI_SS
 	);
-	
-	-- Generate Trigger
-    GO_sig_Stage1_process:Process (S_AXI_ACLK) is
+
+	-- Signals from AXI registers to slave
+	enable_s       <= slv_reg0(0);
+	dataMode_s     <= slv_reg0(4);
+	configMode_s   <= slv_reg0(5);
+	register_rw_s  <= slv_reg0(6);
+	reset_n_s      <= S_AXI_ARESETN AND slv_reg0(7);  -- combine two reset sources
+
+	-- Signals from slave to master
+	busy_m         <= busy_s;
+	error_flag_m   <= error_flag_s;
+
+	-- Handle go signal
+    go_sig_set_process:Process (slv_reg0(1), busy_s) is
     begin
-        if rising_edge (S_AXI_ACLK) then
-            if (S_AXI_ARESETN = '0') then
-                GO_sig_counter       <= (others =>'0');
-                go_sig               <= '0';
-            else
-                if (slv_reg0(0) = '1') then                         -- enabled
-                    if(GO_sig_counter  > unsigned(slv_reg1))  then
-                        go_sig               <= '1';
-                        GO_sig_counter       <= (others =>'0');
-                    else
-                        go_sig               <= '0';
-                        GO_sig_counter       <= GO_sig_counter +1;
-                    end if; 
-                end if;   
-            end if;
-        end if;
+
+        if rising_edge (slv_reg0(1)) then
+
+			if (configMode_s = '1') then
+
+				-- Copy register address
+				register_adr_in_s <= slv_reg2(7 downto 0);
+
+				-- If in write mode, copy register value
+				if (register_rw_s = '1') then
+					register_val_in_s <= slv_reg1(7 downto 0);
+				end if;
+
+			end if;
+
+			-- Start operation by setting go signal
+			go_sig_s <= '1';
+
+		end if;
+
+        if rising_edge (busy_s) then
+
+			-- Reset go signal
+			go_sig_s <= '0';
+
+		end if;
+
     end process;
-	
-	--Maps
-	handlerreset   <= S_AXI_ARESETN AND slv_reg0(1);       -- second Reset-Source for the Handlers
-	enable         <= slv_reg0(0);
-	 
-	busy           <= busy_s       ;
-	error_flag     <= error_flag_s ;
 
 	-- User logic ends
 

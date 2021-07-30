@@ -5,7 +5,7 @@ use ieee.numeric_std.all;
 entity Resolver_Interface_v1_0 is
 	generic (
 		-- Users to add parameters here
-        SPI_clk_div			: INTEGER	:=  50 ;
+        SPI_clk_div			: INTEGER	:= 4;      -- SPI clock divider (25MHz)
 		-- User parameters ends
 		-- Do not modify the parameters beyond this line
 
@@ -16,20 +16,19 @@ entity Resolver_Interface_v1_0 is
 	);
 	port (
 		-- Users to add ports here
-        --LTC2983 1
-        SPI_MOSI				: OUT	 STD_LOGIC;					-- SPI-Port
-		SPI_MISO				: IN	 STD_LOGIC;	
-		SPI_SCLK				: OUT	 STD_LOGIC;	
-		SPI_SS					: OUT	 STD_LOGIC;
-		busy                    : OUT    STD_LOGIC;
-		error_flag              : OUT    STD_LOGIC;
-		
-        AD2S1210_n_reset        : OUT   STD_LOGIC;                  -- Reset (connect to chip)
-        AD2S1210_n_sample       : OUT   STD_LOGIC;                  -- Sample start (connect to chip)
-        AD2S1210_n_fsync        : OUT   STD_LOGIC;                  -- Synchronization signal (connect to chip)
-        AD2S1210_mode_A0        : OUT   STD_LOGIC;                  -- Mode select 0 (connect to chip)
-        AD2S1210_mode_A1        : OUT   STD_LOGIC;                  -- Mode select 1 (connect to chip)
-		
+
+        SPI_MOSI				: OUT STD_LOGIC;   -- SPI master out (connect to chip)
+		SPI_MISO				: IN  STD_LOGIC;   -- SPI master in (connect to chip)
+		SPI_SCLK				: OUT STD_LOGIC;   -- SPI clock (connect to chip)
+		SPI_SS					: OUT STD_LOGIC;   -- SPI slave select (connect to chip)
+        busy	                : OUT STD_LOGIC;   -- busy / data ready signal
+		error                   : OUT STD_LOGIC;   -- error occurred, reset needed
+        AD2S1210_n_reset        : OUT STD_LOGIC;   -- reset (connect to chip)
+        AD2S1210_n_sample       : OUT STD_LOGIC;   -- sample start (connect to chip)
+        AD2S1210_n_fsync        : OUT STD_LOGIC;   -- synchronization signal (connect to chip)
+        AD2S1210_mode_A0        : OUT STD_LOGIC;   -- mode select 0 (connect to chip)
+        AD2S1210_mode_A1        : OUT STD_LOGIC;   -- mode select 1 (connect to chip)
+
 		-- User ports ends
 		-- Do not modify the ports beyond this line
 
@@ -64,46 +63,44 @@ architecture arch_imp of Resolver_Interface_v1_0 is
 	-- component declaration
 	component Resolver_Interface_v1_0_S00_AXI is
 		generic (
-	    SPI_clk_div         : integer   := 2;
-		C_S_AXI_DATA_WIDTH	: integer	:= 32;
-		C_S_AXI_ADDR_WIDTH	: integer	:= 4
+			SPI_clk_div         : integer   := 4;      -- SPI clock divider (25MHz)
+			C_S_AXI_DATA_WIDTH	: integer	:= 32;
+			C_S_AXI_ADDR_WIDTH	: integer	:= 4
 		);
 		port (
-		--LTC2983 1
-        SPI_MOSI				: OUT	 STD_LOGIC;					-- SPI-Port
-		SPI_MISO				: IN	 STD_LOGIC;	
-		SPI_SCLK				: OUT	 STD_LOGIC;	
-		SPI_SS					: OUT	 STD_LOGIC;
-        busy	                : OUT    STD_LOGIC;
-		error_flag              : OUT    STD_LOGIC;
-		
-        AD2S1210_n_reset        : OUT   STD_LOGIC;                  -- Reset (connect to chip)
-        AD2S1210_n_sample       : OUT   STD_LOGIC;                  -- Sample start (connect to chip)
-        AD2S1210_n_fsync        : OUT   STD_LOGIC;                  -- Synchronization signal (connect to chip)
-        AD2S1210_mode_A0        : OUT   STD_LOGIC;                  -- Mode select 0 (connect to chip)
-        AD2S1210_mode_A1        : OUT   STD_LOGIC;                  -- Mode select 1 (connect to chip)
-		
-		S_AXI_ACLK	: in std_logic;
-		S_AXI_ARESETN	: in std_logic;
-		S_AXI_AWADDR	: in std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
-		S_AXI_AWPROT	: in std_logic_vector(2 downto 0);
-		S_AXI_AWVALID	: in std_logic;
-		S_AXI_AWREADY	: out std_logic;
-		S_AXI_WDATA	: in std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
-		S_AXI_WSTRB	: in std_logic_vector((C_S_AXI_DATA_WIDTH/8)-1 downto 0);
-		S_AXI_WVALID	: in std_logic;
-		S_AXI_WREADY	: out std_logic;
-		S_AXI_BRESP	: out std_logic_vector(1 downto 0);
-		S_AXI_BVALID	: out std_logic;
-		S_AXI_BREADY	: in std_logic;
-		S_AXI_ARADDR	: in std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
-		S_AXI_ARPROT	: in std_logic_vector(2 downto 0);
-		S_AXI_ARVALID	: in std_logic;
-		S_AXI_ARREADY	: out std_logic;
-		S_AXI_RDATA	: out std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
-		S_AXI_RRESP	: out std_logic_vector(1 downto 0);
-		S_AXI_RVALID	: out std_logic;
-		S_AXI_RREADY	: in std_logic
+			SPI_MOSI                : OUT STD_LOGIC;   -- SPI master out (connect to chip)
+			SPI_MISO                : IN  STD_LOGIC;   -- SPI master in (connect to chip)
+			SPI_SCLK                : OUT STD_LOGIC;   -- SPI clock (connect to chip)
+			SPI_SS                  : OUT STD_LOGIC;   -- SPI slave select (connect to chip)
+			busy_m                  : OUT STD_LOGIC;   -- busy / data ready signal
+			error_flag_m            : OUT STD_LOGIC;   -- error occurred, reset needed
+			AD2S1210_n_reset        : OUT STD_LOGIC;   -- reset (connect to chip)
+			AD2S1210_n_sample       : OUT STD_LOGIC;   -- sample start (connect to chip)
+			AD2S1210_n_fsync        : OUT STD_LOGIC;   -- synchronization signal (connect to chip)
+			AD2S1210_mode_A0        : OUT STD_LOGIC;   -- mode select 0 (connect to chip)
+			AD2S1210_mode_A1        : OUT STD_LOGIC;   -- mode select 1 (connect to chip)
+			
+			S_AXI_ACLK		: in std_logic;
+			S_AXI_ARESETN	: in std_logic;
+			S_AXI_AWADDR	: in std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
+			S_AXI_AWPROT	: in std_logic_vector(2 downto 0);
+			S_AXI_AWVALID	: in std_logic;
+			S_AXI_AWREADY	: out std_logic;
+			S_AXI_WDATA		: in std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
+			S_AXI_WSTRB		: in std_logic_vector((C_S_AXI_DATA_WIDTH/8)-1 downto 0);
+			S_AXI_WVALID	: in std_logic;
+			S_AXI_WREADY	: out std_logic;
+			S_AXI_BRESP		: out std_logic_vector(1 downto 0);
+			S_AXI_BVALID	: out std_logic;
+			S_AXI_BREADY	: in std_logic;
+			S_AXI_ARADDR	: in std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
+			S_AXI_ARPROT	: in std_logic_vector(2 downto 0);
+			S_AXI_ARVALID	: in std_logic;
+			S_AXI_ARREADY	: out std_logic;
+			S_AXI_RDATA		: out std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
+			S_AXI_RRESP		: out std_logic_vector(1 downto 0);
+			S_AXI_RVALID	: out std_logic;
+			S_AXI_RREADY	: in std_logic
 		);
 	end component Resolver_Interface_v1_0_S00_AXI;
 
@@ -117,17 +114,17 @@ Resolver_Interface_v1_0_S00_AXI_inst : Resolver_Interface_v1_0_S00_AXI
 		C_S_AXI_ADDR_WIDTH	=> C_S00_AXI_ADDR_WIDTH
 	)
 	port map (
-        SPI_MOSI        => SPI_MOSI,
-		SPI_MISO        => SPI_MISO,
-		SPI_SCLK        => SPI_SCLK,
-		SPI_SS          => SPI_SS,
-		busy            => busy,
-		error_flag      => error_flag,
-        AD2S1210_n_reset        => AD2S1210_n_reset,
-        AD2S1210_n_sample       => AD2S1210_n_sample,
-        AD2S1210_n_fsync        => AD2S1210_n_fsync,
-        AD2S1210_mode_A0        => AD2S1210_mode_A0,
-        AD2S1210_mode_A1        => AD2S1210_mode_A1,
+        SPI_MOSI            => SPI_MOSI,
+		SPI_MISO            => SPI_MISO,
+		SPI_SCLK            => SPI_SCLK,
+		SPI_SS              => SPI_SS,
+		busy_m              => busy,
+		error_flag_m        => error,
+        AD2S1210_n_reset    => AD2S1210_n_reset,
+        AD2S1210_n_sample   => AD2S1210_n_sample,
+        AD2S1210_n_fsync    => AD2S1210_n_fsync,
+        AD2S1210_mode_A0    => AD2S1210_mode_A0,
+        AD2S1210_mode_A1    => AD2S1210_mode_A1,
 		
 		S_AXI_ACLK		=> s00_axi_aclk,
 		S_AXI_ARESETN	=> s00_axi_aresetn,

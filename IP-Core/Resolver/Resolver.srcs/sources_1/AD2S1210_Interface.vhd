@@ -25,51 +25,50 @@ use IEEE.NUMERIC_STD.ALL;
 
 entity AD2S1210_Interface is
     Generic(
-        SPI_Datalength          : INTEGER   :=  8;                  -- Wortlänge SPI
-        SPI_Slavenumber         : INTEGER   :=  1;                  -- sollte auf 1 bleiben
-        SPI_cpha                : STD_LOGIC := '1';                 -- Clock-Phase SPI
-        SPI_cpol                : STD_LOGIC := '0';                 -- Clock-Polarität SPI
-        SPI_cont                : STD_LOGIC := '0';                 -- continuierlicher Modus SPI
-        SPI_clk_div             : INTEGER   :=  2                   -- Taktteiler SPIs
+        SPI_Datalength     : INTEGER   :=  8;                    -- SPI data length
+        SPI_Slavenumber    : INTEGER   :=  1;                    -- number of SPI slaves
+        SPI_cpha           : STD_LOGIC := '1';                   -- SPI clock phase
+        SPI_cpol           : STD_LOGIC := '0';                   -- SPI clock polarity
+        SPI_cont           : STD_LOGIC := '0';                   -- SPI continuous mode
+        SPI_clk_div        : INTEGER   :=  4                     -- SPI clock divider (25MHz)
     );
     Port (
-        clock                   : IN    STD_LOGIC;                  -- System clock
-        reset_n                 : IN    STD_LOGIC;                  -- Synchronous reset
-        enable                  : IN    STD_LOGIC;                  -- System enable
-        go_sig                  : IN    STD_LOGIC;                  -- Global Trigger
-        busy                    : OUT   STD_LOGIC;                  -- busy / data ready signal
-        error_flag              : OUT   STD_LOGIC;                  -- Error occured, need reset
-        dataMode                : IN    STD_LOGIC;                  -- 0 = position mode, 1 = velocity mode
-        configMode              : IN    STD_LOGIC;                  -- if configMode = 1, dataMode is ignored
-        register_rw             : IN    STD_LOGIC;                  -- 0 = read register, 1 = write register
-        register_adr_in         : IN    STD_LOGIC_VECTOR (7 downto 0);  -- Register address
-        register_val_in         : IN    STD_LOGIC_VECTOR (7 downto 0);  -- Value to write to register
-        register_val_out        : OUT   STD_LOGIC_VECTOR (7 downto 0);  -- Read value from register
-        data_out                : OUT   STD_LOGIC_VECTOR (15 downto 0); -- Read value in normal mode
+        clock              : IN  STD_LOGIC;                      -- system clock
+        reset_n            : IN  STD_LOGIC;                      -- synchronous reset
+        enable             : IN  STD_LOGIC;                      -- system enable
+        go_sig             : IN  STD_LOGIC;                      -- global trigger
+        busy               : OUT STD_LOGIC;                      -- busy / data ready signal
+        error_flag         : OUT STD_LOGIC;                      -- error occurred, reset needed
+        dataMode           : IN  STD_LOGIC;                      -- 0 = position mode, 1 = velocity mode
+        configMode         : IN  STD_LOGIC;                      -- if configMode = 1, dataMode is ignored
+        register_rw        : IN  STD_LOGIC;                      -- 0 = read register, 1 = write register
+        register_adr_in    : IN  STD_LOGIC_VECTOR (7 downto 0);  -- register address
+        register_val_in    : IN  STD_LOGIC_VECTOR (7 downto 0);  -- value to write to register
+        register_val_out   : OUT STD_LOGIC_VECTOR (7 downto 0);  -- read value from register
+        data_out           : OUT STD_LOGIC_VECTOR (15 downto 0); -- read value in normal mode
         --
-        SPI_MOSI                : OUT   STD_LOGIC;                  -- SPI-Port
-        SPI_MISO                : IN    STD_LOGIC;
-        SPI_SCLK                : OUT   STD_LOGIC;
-        SPI_SS                  : OUT   STD_LOGIC;
+        SPI_MOSI           : OUT STD_LOGIC;                      -- SPI master out (connect to chip)
+        SPI_MISO           : IN  STD_LOGIC;                      -- SPI master in (connect to chip)
+        SPI_SCLK           : OUT STD_LOGIC;                      -- SPI clock (connect to chip)
+        SPI_SS             : OUT STD_LOGIC;                      -- SPI slave select (connect to chip)
         --
-        AD2S1210_n_reset        : OUT   STD_LOGIC;                  -- Reset (connect to chip)
-        AD2S1210_n_sample       : OUT   STD_LOGIC;                  -- Sample start (connect to chip)
-        AD2S1210_n_fsync        : OUT   STD_LOGIC;                  -- Synchronization signal (connect to chip)
-        AD2S1210_mode_A0        : OUT   STD_LOGIC;                  -- Mode select 0 (connect to chip)
-        AD2S1210_mode_A1        : OUT   STD_LOGIC                   -- Mode select 1 (connect to chip)
-        --
+        AD2S1210_n_reset   : OUT STD_LOGIC;                      -- reset (connect to chip)
+        AD2S1210_n_sample  : OUT STD_LOGIC;                      -- sample start (connect to chip)
+        AD2S1210_n_fsync   : OUT STD_LOGIC;                      -- synchronization signal (connect to chip)
+        AD2S1210_mode_A0   : OUT STD_LOGIC;                      -- mode select 0 (connect to chip)
+        AD2S1210_mode_A1   : OUT STD_LOGIC                       -- mode select 1 (connect to chip)
     );
 end AD2S1210_Interface;
 
 architecture Behavioral of AD2S1210_Interface is
 
--- Konstanten anlegen-------------------------------------------------------------------------------
+-- Constants ---------------------------------------------------------------------------------------
 constant SPI_SEND_DUMMY             : STD_LOGIC_VECTOR  := x"0F";
 constant DUMMY_ADR                  : STD_LOGIC_VECTOR  := "11001100";
 constant DUMMY_VAL                  : STD_LOGIC_VECTOR  := "01010011";
 constant AD2S1210_REG_FAULT         : STD_LOGIC_VECTOR  := x"FF";
 
--- Signale anlegen----------------------------------------------------------------------------------
+-- Create signals ----------------------------------------------------------------------------------
 type states_AD2S1210_Interface is
 (
     Resolver_Powerup,
@@ -99,7 +98,7 @@ signal byte_rx_counter      : unsigned(7 downto 0);
 signal wakeup_counter       : unsigned(31 downto 0);
 signal sample_counter       : unsigned(7 downto 0);
 
--- Komponenten anlegen------------------------------------------------------------------------------
+-- Create component --------------------------------------------------------------------------------
 component spi_master_LTC is
     generic(
         slaves  : INTEGER := 1;  --number of spi slaves
@@ -126,7 +125,7 @@ end component spi_master_LTC;
 
 
 begin
-    -- Komponenten instanziieren------------------------------------------------------------------------
+    -- Create components ---------------------------------------------------------------------------
     SPI_Core : spi_master_LTC
     generic map(
         slaves  => SPI_Slavenumber,
@@ -154,8 +153,8 @@ begin
     AD2S1210_mode_A1 <= dataMode OR configMode;
     AD2S1210_mode_A0 <= configMode;
     
-    -- Statemachine-Prozess-----------------------------------------------------------------------------
-    StateMachine_LTC : process (clock)
+    -- State machine process -----------------------------------------------------------------------
+    StateMachine : process (clock)
     begin
         if (reset_n = '0') then     -- Reset
             
