@@ -785,6 +785,10 @@ Variation34=Designator=C61|UniqueId=\MBHAUNLO\OXNHNFZT|Kind=1|AlternatePart=
 Variation35=Designator=C62|UniqueId=\MBHAUNLO\SZOZCVWB|Kind=1|AlternatePart= 
 ParamVariationCount=0
 
+[GeneratedDocument1]
+DocumentPath=Project Outputs for UltraZohm_Digital_Sensor_Board\Design Rule Check - UltraZohm_Digital_Sensor_Board_v1.html
+DItemRevisionGUID=
+
 [Parameter1]
 Name=AuthorParam
 Value=Thomas Effenberger
