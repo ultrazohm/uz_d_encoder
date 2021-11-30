@@ -24,7 +24,7 @@ else
 fi
 export LD_LIBRARY_PATH
 
-HD_PWD='C:/Users/ga63zix/uz/encoder/IP-Core/Resolver/resolver.runs/synth_1'
+HD_PWD='C:/Users/FelixKaiser/Documents/2_EAL_Praktikum_HW/IP-Core/Resolver/Resolver.runs/synth_1'
 cd "$HD_PWD"
 
 HD_LOG=runme.log

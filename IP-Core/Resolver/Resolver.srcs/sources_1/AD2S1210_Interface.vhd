@@ -1,4 +1,4 @@
-----------------------------------------------------------------------------------
+
 -- Company: TUM
 -- Engineer: Thomas Effenberger
 -- 
@@ -154,7 +154,7 @@ begin
     AD2S1210_mode_A0 <= configMode;
     
     -- State machine process -----------------------------------------------------------------------
-    StateMachine : process (clock)
+    StateMachine : process (clock,reset_n,enable)
     begin
         if (reset_n = '0') then     -- Reset
             

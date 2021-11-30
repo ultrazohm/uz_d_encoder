@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<item value="" key="ZedBoard_AXI_test-bmmFile"/>
+	<item value="{&quot;cables&quot;:[{&quot;name&quot;:&quot;Digilent Zed 210248A399F6&quot;,&quot;indexContextMap&quot;:{&quot;2&quot;:&quot;jsn-Zed-210248A399F6-4ba00477-0&quot;,&quot;3&quot;:&quot;jsn-Zed-210248A399F6-23727093-0&quot;}}]}" key="devices_info_Local"/>
+	<item value="Local" key="ZedBoard_AXI_test-target"/>
+	<item value="false" key="ZedBoard_AXI_test-partial_bit"/>
+	<item value="ZedBoard_AXI_test" key="programfpga.sdxproject"/>
+	<item value="Auto Detect" key="ZedBoard_AXI_test-device"/>
+	<item value="false" key="ZedBoard_AXI_test-skip_rev_check"/>
+	<item value="C:\Users\FelixKaiser\Documents\3_EAL_Playground\ZedboardAXI_Encoder\design1_wrapper.bit" key="ZedBoard_AXI_test-bitFile"/>
+</section>

@@ -1,8 +1,8 @@
 --Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
 ----------------------------------------------------------------------------------
---Tool Version: Vivado v.2020.1.1 (win64) Build 2960000 Wed Aug  5 22:57:20 MDT 2020
---Date        : Wed Oct 20 17:05:45 2021
---Host        : TUEIEAL-TL01 running 64-bit major release  (build 9200)
+--Tool Version: Vivado v.2020.1 (win64) Build 2902540 Wed May 27 19:54:49 MDT 2020
+--Date        : Mon Nov 29 16:57:26 2021
+--Host        : DESKTOP-E3UJO9V running 64-bit major release  (build 9200)
 --Command     : generate_target design_1_wrapper.bd
 --Design      : design_1_wrapper
 --Purpose     : IP block netlist
@@ -42,17 +42,28 @@ entity design_1_wrapper is
     JB1 : out STD_LOGIC;
     JB2 : out STD_LOGIC;
     JB3 : out STD_LOGIC;
-    JB4 : out STD_LOGIC;
-    btns_5bits_tri_i : in STD_LOGIC_VECTOR ( 4 downto 0 );
-    leds_8bits_tri_o : out STD_LOGIC_VECTOR ( 7 downto 0 );
-    sws_8bits_tri_i : in STD_LOGIC_VECTOR ( 7 downto 0 )
+    JB4 : out STD_LOGIC
   );
 end design_1_wrapper;
 
 architecture STRUCTURE of design_1_wrapper is
   component design_1 is
   port (
-    sws_8bits_tri_i : in STD_LOGIC_VECTOR ( 7 downto 0 );
+    JA1 : out STD_LOGIC;
+    JA2 : out STD_LOGIC;
+    JA3 : out STD_LOGIC;
+    JA4 : out STD_LOGIC;
+    JB1 : out STD_LOGIC;
+    JB2 : out STD_LOGIC;
+    JB3 : out STD_LOGIC;
+    JB4 : out STD_LOGIC;
+    JA5 : in STD_LOGIC;
+    FIXED_IO_mio : inout STD_LOGIC_VECTOR ( 53 downto 0 );
+    FIXED_IO_ddr_vrn : inout STD_LOGIC;
+    FIXED_IO_ddr_vrp : inout STD_LOGIC;
+    FIXED_IO_ps_srstb : inout STD_LOGIC;
+    FIXED_IO_ps_clk : inout STD_LOGIC;
+    FIXED_IO_ps_porb : inout STD_LOGIC;
     DDR_cas_n : inout STD_LOGIC;
     DDR_cke : inout STD_LOGIC;
     DDR_ck_n : inout STD_LOGIC;
@@ -67,24 +78,7 @@ architecture STRUCTURE of design_1_wrapper is
     DDR_dm : inout STD_LOGIC_VECTOR ( 3 downto 0 );
     DDR_dq : inout STD_LOGIC_VECTOR ( 31 downto 0 );
     DDR_dqs_n : inout STD_LOGIC_VECTOR ( 3 downto 0 );
-    DDR_dqs_p : inout STD_LOGIC_VECTOR ( 3 downto 0 );
-    leds_8bits_tri_o : out STD_LOGIC_VECTOR ( 7 downto 0 );
-    FIXED_IO_mio : inout STD_LOGIC_VECTOR ( 53 downto 0 );
-    FIXED_IO_ddr_vrn : inout STD_LOGIC;
-    FIXED_IO_ddr_vrp : inout STD_LOGIC;
-    FIXED_IO_ps_srstb : inout STD_LOGIC;
-    FIXED_IO_ps_clk : inout STD_LOGIC;
-    FIXED_IO_ps_porb : inout STD_LOGIC;
-    btns_5bits_tri_i : in STD_LOGIC_VECTOR ( 4 downto 0 );
-    JA1 : out STD_LOGIC;
-    JA2 : out STD_LOGIC;
-    JA3 : out STD_LOGIC;
-    JA4 : out STD_LOGIC;
-    JB1 : out STD_LOGIC;
-    JB2 : out STD_LOGIC;
-    JB3 : out STD_LOGIC;
-    JB4 : out STD_LOGIC;
-    JA5 : in STD_LOGIC
+    DDR_dqs_p : inout STD_LOGIC_VECTOR ( 3 downto 0 )
   );
   end component design_1;
 begin
@@ -119,9 +113,6 @@ design_1_i: component design_1
       JB1 => JB1,
       JB2 => JB2,
       JB3 => JB3,
-      JB4 => JB4,
-      btns_5bits_tri_i(4 downto 0) => btns_5bits_tri_i(4 downto 0),
-      leds_8bits_tri_o(7 downto 0) => leds_8bits_tri_o(7 downto 0),
-      sws_8bits_tri_i(7 downto 0) => sws_8bits_tri_i(7 downto 0)
+      JB4 => JB4
     );
 end STRUCTURE;

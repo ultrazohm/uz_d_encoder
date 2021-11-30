@@ -39,7 +39,7 @@ ARCHITECTURE logic OF spi_master_LTC IS
   SIGNAL last_bit_rx : INTEGER RANGE 0 TO d_width*2;         --last rx data bit location
   SIGNAL sclk_buffer : STD_LOGIC;
 BEGIN
-  PROCESS(clock)
+  PROCESS(clock,reset_n,cpol)
   BEGIN
 
     IF(reset_n = '0') THEN        --reset system
