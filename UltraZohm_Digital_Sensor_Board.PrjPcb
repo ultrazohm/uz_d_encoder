@@ -790,12 +790,20 @@ DocumentPath=Project Outputs for UltraZohm_Digital_Sensor_Board\Design Rule Chec
 DItemRevisionGUID=
 
 [Parameter1]
-Name=AuthorParam
-Value=Thomas Effenberger
+Name=Date
+Value=01/12/21
 
 [Parameter2]
+Name=ProjectName
+Value=Universal Encoder
+
+[Parameter3]
+Name=AuthorParam
+Value=Julian Klein
+
+[Parameter4]
 Name=ProjectRevision
-Value=1v01
+Value=2v00
 
 [Configuration1]
 Name=Sources
