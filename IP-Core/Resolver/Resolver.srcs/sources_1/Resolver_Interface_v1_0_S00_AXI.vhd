@@ -133,6 +133,7 @@ architecture arch_imp of Resolver_Interface_v1_0_S00_AXI is
 	--Signals to map the components--------------------------------------------------------
 	signal enable_s  			: STD_LOGIC;                    --System enable
     signal go_sig_s				: STD_LOGIC;					--global Trigger
+    signal go_latch_s				: STD_LOGIC;
     signal reset_n_s            : STD_LOGIC;
     
     signal busy_s		        : STD_LOGIC;
@@ -300,8 +301,13 @@ begin
 	                -- Respective byte enables are asserted as per write strobes                   
 	                -- slave registor 0
 	                slv_reg0(byte_index*8+7 downto byte_index*8) <= S_AXI_WDATA(byte_index*8+7 downto byte_index*8);
+	                
+	                
 	              end if;
 	            end loop;
+	            
+	  
+	                
 	          when b"01" =>
 	            for byte_index in 0 to (C_S_AXI_DATA_WIDTH/8-1) loop
 	              if ( S_AXI_WSTRB(byte_index) = '1' ) then
@@ -514,7 +520,8 @@ begin
     begin
 
         if rising_edge (slv_reg0(1)) then
-
+     --       if (rising_edge(go_sig_s)) then
+            
 			if (configMode_s = '1') then
 
 				-- Copy register address
@@ -529,11 +536,11 @@ begin
 
 			-- Start operation by setting go signal
 			go_sig_s <= '1';
-
+            
 		end if;
 
-        if rising_edge (busy_s) then
-
+      -- if rising_edge (busy_s) then
+        if (busy_s = '1') then
 			-- Reset go signal
 			go_sig_s <= '0';
 
