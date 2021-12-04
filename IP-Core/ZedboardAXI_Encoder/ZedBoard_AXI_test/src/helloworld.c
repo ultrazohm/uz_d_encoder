@@ -60,50 +60,48 @@
 int main()
 {
     init_platform();
-
-    // Init Encoder
-  //  struct uz_encoderIP_config_t config = {.base_address =TEST_BASE_ADDRESS , .ip_clk_frequency_Hz = 5000000};
-
-   // uz_encoderIP_t* myIP;
-  //  myIP <= uz_encoderIP_init(config);
-   // myIP <= uz_encoderIP_init();
-    // Read Data
-    int32_t data;
-
-
     xil_printf("Init \n\r");
 
-    //Set NRESET and ENABLE and wait until Resolver is Ready
-    int32_t rescon = Xil_In32(TEST_BASE_ADDRESS+RESCON_Data_uz_axi_testIP);
-
-    rescon |= RESCON_Data_uz_axi_nRESET_bit;
-    rescon |= RESCON_Data_uz_axi_EN_bit;
-
-    Xil_Out32(TEST_BASE_ADDRESS+RESCON_Data_uz_axi_testIP, rescon);
-
-    do{
-          rescon = Xil_In32(TEST_BASE_ADDRESS+RESCON_Data_uz_axi_testIP);
-    } while (rescon & RESCON_Data_uz_axi_BUSY_bit);
-
+    // Init Encoder
+    uz_encoderIP_t* myIP;
+    myIP <= uz_encoderIP_init();
 
     xil_printf("LoopBegin \n\r");
     while (1){
-    	// Set Go Bit and Reset; Wait until Resolver not busy anymore
-    	int32_t rescon = Xil_In32(TEST_BASE_ADDRESS+RESCON_Data_uz_axi_testIP);
-    	rescon |= RESCON_Data_uz_axi_GO_bit;
-    	Xil_Out32(TEST_BASE_ADDRESS+RESCON_Data_uz_axi_testIP, rescon);
-    	rescon &= ~(RESCON_Data_uz_axi_GO_bit);
-    	Xil_Out32(TEST_BASE_ADDRESS+RESCON_Data_uz_axi_testIP, rescon);
+    	// Read Data
+    	//int32_t data;
+    	//data =  uz_encoderIP_readData(myIP);
+       // xil_printf("Data: %u \n\r", data);
+    	//usleep(1000000);
 
-        do{
-        	rescon = Xil_In32(TEST_BASE_ADDRESS+RESCON_Data_uz_axi_testIP);
-        } while (rescon & RESCON_Data_uz_axi_BUSY_bit);
+    	// Set Config Mode
+    	//usleep(10000000);
+    	//uz_encoderIP_setConfigMode(myIP);
+    	//xil_printf("Config Mode \n\r");
 
+    	// Set Velocity Mode
+    //	usleep(10000000);
+    //	uz_encoderIP_setDataModeVelocity(myIP);
+    //	xil_printf("Velocity Mode \n\r");
 
-        data = Xil_In32(TEST_BASE_ADDRESS+RESDAT_Data_uz_axi_testIP);
-        xil_printf("Data: %u \n\r", data);
+    	// Set Position Mode
+    	//usleep(10000000);
+    	//uz_encoderIP_setDataModePosition(myIP);
+    	//xil_printf("Position Mode \n\r");
 
-    	usleep(1000000);
+    	//Read Register
+    	//int32_t data;
+    	//int32_t addr = 0x70;
+    	//data = uz_encoderIP_readRegister(myIP, addr);
+		 //xil_printf("Register %u Data: %u \n\r", addr, data);
+		 //usleep(1000000);
+
+    	//Write Register
+    	int32_t addr = 0x80;
+    	int32_t val = 0x70;
+    	uz_encoderIP_writeRegister(myIP,  addr, val);
+		xil_printf("Writing to Register %u Value: %u \n\r", addr, val);
+		 usleep(1000000);
     }
 
 

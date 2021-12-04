@@ -21,8 +21,7 @@ static uz_encoderIP_t* uz_encoderIP_allocation(void){
     return (self);
 }
 
-uz_encoderIP_t* uz_encoderIP_init(struct uz_encoderIP_config_t config) {
-//uz_encoderIP_t* uz_encoderIP_init(void) {
+uz_encoderIP_t* uz_encoderIP_init(void) {
     uz_encoderIP_t* self = uz_encoderIP_allocation();
 
     uz_encoderIP_hw_write_RESCON(TEST_BASE_ADDRESS, RESCON_Data_uz_axi_EN_bit | RESCON_Data_uz_axi_nRESET_bit);
@@ -60,6 +59,8 @@ int32_t uz_encoderIP_readData(uz_encoderIP_t* self){
     int32_t rescon = uz_encoderIP_hw_read_RESCON(TEST_BASE_ADDRESS);
     rescon |= RESCON_Data_uz_axi_GO_bit;
     uz_encoderIP_hw_write_RESCON(TEST_BASE_ADDRESS, rescon);
+    rescon &= ~(RESCON_Data_uz_axi_GO_bit);
+    uz_encoderIP_hw_write_RESCON(TEST_BASE_ADDRESS, rescon);
     do{
         rescon = uz_encoderIP_hw_read_RESCON(TEST_BASE_ADDRESS);
     } while (rescon & RESCON_Data_uz_axi_BUSY_bit);
@@ -71,12 +72,14 @@ int32_t uz_encoderIP_readRegister(uz_encoderIP_t* self, int32_t addr){
     uz_encoderIP_setConfigMode(self);
 
     int32_t rescon = uz_encoderIP_hw_read_RESCON(TEST_BASE_ADDRESS);
-    rescon &= ~RESCON_Data_uz_axi_RW_bit;
+    rescon &= ~(RESCON_Data_uz_axi_RW_bit);
     uz_encoderIP_hw_write_RESCON(TEST_BASE_ADDRESS, rescon);
 
     uz_encoderIP_hw_write_RESADR(TEST_BASE_ADDRESS, addr);
 
     rescon |= RESCON_Data_uz_axi_GO_bit;
+    uz_encoderIP_hw_write_RESCON(TEST_BASE_ADDRESS, rescon);
+    rescon &= ~(RESCON_Data_uz_axi_GO_bit);
     uz_encoderIP_hw_write_RESCON(TEST_BASE_ADDRESS, rescon);
 
     do{
@@ -97,6 +100,8 @@ void uz_encoderIP_writeRegister(uz_encoderIP_t* self, int32_t addr, int32_t val)
     uz_encoderIP_hw_write_RESDAT(TEST_BASE_ADDRESS, val);
     
     rescon |= RESCON_Data_uz_axi_GO_bit;
+    uz_encoderIP_hw_write_RESCON(TEST_BASE_ADDRESS, rescon);
+    rescon &= ~(RESCON_Data_uz_axi_GO_bit);
     uz_encoderIP_hw_write_RESCON(TEST_BASE_ADDRESS, rescon);
 
     do{

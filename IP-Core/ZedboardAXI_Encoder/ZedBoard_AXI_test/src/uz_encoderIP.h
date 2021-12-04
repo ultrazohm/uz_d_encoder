@@ -25,8 +25,8 @@ struct uz_encoderIP_t {
  * @param config Configuration values for the IP-Core
  * @return Pointer to initialized instance
  */
-uz_encoderIP_t* uz_encoderIP_init(struct uz_encoderIP_config_t config);
-//uz_encoderIP_t* uz_encoderIP_init(void);
+//uz_encoderIP_t* uz_encoderIP_init(struct uz_encoderIP_config_t config);
+uz_encoderIP_t* uz_encoderIP_init(void);
 
 void uz_encoderIP_setConfigMode(uz_encoderIP_t* self);
 void uz_encoderIP_setDataModeVelocity(uz_encoderIP_t* self);
