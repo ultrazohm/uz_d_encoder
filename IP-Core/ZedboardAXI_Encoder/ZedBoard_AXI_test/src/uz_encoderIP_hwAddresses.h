@@ -15,5 +15,6 @@
 #define  RESCON_Data_uz_axi_testIP        0x00U  //data register for RESCON
 #define  RESDAT_Data_uz_axi_testIP        0x04U  //data register for RESDAT
 #define  RESADR_Data_uz_axi_testIP        0x08U  //data register for RESADR
+#define  RESRDA_Data_uz_axi_testIP        0x0CU  //data register for RESADR
 
 #endif /* UZ_ENCODER_IP_H_ */

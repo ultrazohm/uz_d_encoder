@@ -22,6 +22,6 @@ void uz_encoderIP_hw_write_RESADR(uint32_t base_address, int32_t val);
 int32_t uz_encoderIP_hw_read_RESCON(uint32_t base_address);
 int32_t uz_encoderIP_hw_read_RESDAT(uint32_t base_address);
 int32_t uz_encoderIP_hw_read_RESADR(uint32_t base_address);
-
+int32_t uz_encoderIP_hw_read_RESRDA(uint32_t base_address);
 
 #endif // UZ_ENCODERIP_HW_H

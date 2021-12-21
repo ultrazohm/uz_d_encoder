@@ -166,7 +166,7 @@ begin
             wakeup_counter          <= (others => '0');
             sample_counter          <= (others => '0');
             
-            SPI_SS                  <= '1';
+            SPI_SS                  <= '0';
             SPI_enable              <= '0';
             busy                    <= '1';
             AD2S1210_n_reset        <= '0';
@@ -331,7 +331,7 @@ begin
                     when Resolver_SPI_Waittransmit2 =>      -- Waitstate 2 for SPI-Core to finish
                         SPI_enable                          <= '0';
                         if (SPI_busy = '0') then
-                            SPI_SS                          <= '1';
+                            SPI_SS                          <= '0';
                             state_Resolver_Interface        <= laststate_Resolver_Interface;
                             laststate_Resolver_Interface    <= Resolver_SPI_Waittransmit2;
                         end if;

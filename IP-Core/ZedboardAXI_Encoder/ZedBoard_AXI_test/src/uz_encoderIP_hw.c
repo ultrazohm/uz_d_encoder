@@ -29,6 +29,10 @@ int32_t uz_encoderIP_hw_read_RESDAT(uint32_t base_address){
     uz_assert_not_zero(base_address);
     return (uz_axi_read_int32(base_address + RESDAT_Data_uz_axi_testIP));
 }
+int32_t uz_encoderIP_hw_read_RESRDA(uint32_t base_address){
+    uz_assert_not_zero(base_address);
+    return (uz_axi_read_int32(base_address + RESRDA_Data_uz_axi_testIP));
+}
 
 int32_t uz_encoderIP_hw_read_RESADR(uint32_t base_address){
     uz_assert_not_zero(base_address);

@@ -43,15 +43,15 @@ void uz_encoderIP_setConfigMode(uz_encoderIP_t* self){
 
 void uz_encoderIP_setDataModeVelocity(uz_encoderIP_t* self){
     int32_t rescon = uz_encoderIP_hw_read_RESCON(TEST_BASE_ADDRESS);
-    rescon &= ~RESCON_Data_uz_axi_CMODE_bit;
-    rescon |= RESCON_Data_uz_axi_DMODE_bit;
+    rescon &= ~(RESCON_Data_uz_axi_CMODE_bit);
+    rescon |= (RESCON_Data_uz_axi_DMODE_bit);
     uz_encoderIP_hw_write_RESCON(TEST_BASE_ADDRESS, rescon);
 }
 
 void uz_encoderIP_setDataModePosition(uz_encoderIP_t* self){
     int32_t rescon = uz_encoderIP_hw_read_RESCON(TEST_BASE_ADDRESS);
-    rescon &= ~RESCON_Data_uz_axi_CMODE_bit;
-    rescon &= ~RESCON_Data_uz_axi_DMODE_bit;
+    rescon &= ~(RESCON_Data_uz_axi_CMODE_bit);
+    rescon &= ~(RESCON_Data_uz_axi_DMODE_bit);
     uz_encoderIP_hw_write_RESCON(TEST_BASE_ADDRESS, rescon);
 }
 
@@ -86,7 +86,7 @@ int32_t uz_encoderIP_readRegister(uz_encoderIP_t* self, int32_t addr){
         rescon = uz_encoderIP_hw_read_RESCON(TEST_BASE_ADDRESS);
     } while (rescon & RESCON_Data_uz_axi_BUSY_bit);
     
-    return uz_encoderIP_hw_read_RESDAT(TEST_BASE_ADDRESS);
+    return uz_encoderIP_hw_read_RESRDA(TEST_BASE_ADDRESS);
 }
 
 void uz_encoderIP_writeRegister(uz_encoderIP_t* self, int32_t addr, int32_t val){

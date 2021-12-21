@@ -66,42 +66,47 @@ int main()
     uz_encoderIP_t* myIP;
     myIP <= uz_encoderIP_init();
 
+
+    // Set Velocity Mode
+       // 	usleep(1000000);
+        //	uz_encoderIP_setDataModeVelocity(myIP);
+        	//xil_printf("Velocity Mode \n\r");
+
+        	// Set Position Mode
+        	usleep(1000000);
+        	uz_encoderIP_setDataModePosition(myIP);
+        	xil_printf("Position Mode \n\r");
+
     xil_printf("LoopBegin \n\r");
     while (1){
     	// Read Data
-    	//int32_t data;
-    	//data =  uz_encoderIP_readData(myIP);
-       // xil_printf("Data: %u \n\r", data);
-    	//usleep(1000000);
+   	int32_t data;
+    	data =  uz_encoderIP_readData(myIP);
+        xil_printf("Data: %u \n\r", data);
+    	usleep(500000);
 
     	// Set Config Mode
     	//usleep(10000000);
     	//uz_encoderIP_setConfigMode(myIP);
     	//xil_printf("Config Mode \n\r");
 
-    	// Set Velocity Mode
-    //	usleep(10000000);
-    //	uz_encoderIP_setDataModeVelocity(myIP);
-    //	xil_printf("Velocity Mode \n\r");
 
-    	// Set Position Mode
-    	//usleep(10000000);
-    	//uz_encoderIP_setDataModePosition(myIP);
-    	//xil_printf("Position Mode \n\r");
 
-    	//Read Register
+
+
+    //	Read Register
     	//int32_t data;
-    	//int32_t addr = 0x70;
+    	//int32_t addr = 0x88;
     	//data = uz_encoderIP_readRegister(myIP, addr);
-		 //xil_printf("Register %u Data: %u \n\r", addr, data);
-		 //usleep(1000000);
+		//xil_printf("Register %u Data: %u \n\r", addr, data);
+		//usleep(1000000);
 
     	//Write Register
-    	int32_t addr = 0x80;
-    	int32_t val = 0x70;
-    	uz_encoderIP_writeRegister(myIP,  addr, val);
-		xil_printf("Writing to Register %u Value: %u \n\r", addr, val);
-		 usleep(1000000);
+    	//int32_t addr = 0x88;
+    	//int32_t val = 0x3A;
+    	//uz_encoderIP_writeRegister(myIP,  addr, val);
+		//xil_printf("Writing to Register %u Value: %u \n\r", addr, val);
+		 //usleep(1000000);
     }
 
 

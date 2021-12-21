@@ -1,7 +1,7 @@
 --Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
 ----------------------------------------------------------------------------------
 --Tool Version: Vivado v.2020.1 (win64) Build 2902540 Wed May 27 19:54:49 MDT 2020
---Date        : Fri Dec  3 14:52:56 2021
+--Date        : Tue Dec 21 13:23:32 2021
 --Host        : DESKTOP-E3UJO9V running 64-bit major release  (build 9200)
 --Command     : generate_target design_1_wrapper.bd
 --Design      : design_1_wrapper
@@ -38,7 +38,7 @@ entity design_1_wrapper is
     JA2 : out STD_LOGIC;
     JA3 : out STD_LOGIC;
     JA4 : out STD_LOGIC;
-    JA5 : in STD_LOGIC;
+    JA7 : in STD_LOGIC;
     JB1 : out STD_LOGIC;
     JB2 : out STD_LOGIC;
     JB3 : out STD_LOGIC;
@@ -57,7 +57,7 @@ architecture STRUCTURE of design_1_wrapper is
     JB2 : out STD_LOGIC;
     JB3 : out STD_LOGIC;
     JB4 : out STD_LOGIC;
-    JA5 : in STD_LOGIC;
+    JA7 : in STD_LOGIC;
     DDR_cas_n : inout STD_LOGIC;
     DDR_cke : inout STD_LOGIC;
     DDR_ck_n : inout STD_LOGIC;
@@ -109,7 +109,7 @@ design_1_i: component design_1
       JA2 => JA2,
       JA3 => JA3,
       JA4 => JA4,
-      JA5 => JA5,
+      JA7 => JA7,
       JB1 => JB1,
       JB2 => JB2,
       JB3 => JB3,

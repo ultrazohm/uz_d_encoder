@@ -446,7 +446,7 @@ begin
 	      when b"10" =>
 	        reg_data_out(7 downto 0) <= register_adr_in_s;
 	      when b"11" =>
-	        reg_data_out <= (others => '0');
+	        reg_data_out(7 downto 0) <= register_val_out_s;
 	      when others =>
 	        reg_data_out  <= (others => '0');
 	    end case;
@@ -520,7 +520,6 @@ begin
     begin
 
         if rising_edge (slv_reg0(1)) then
-     --       if (rising_edge(go_sig_s)) then
             
 			if (configMode_s = '1') then
 
@@ -539,7 +538,6 @@ begin
             
 		end if;
 
-      -- if rising_edge (busy_s) then
         if (busy_s = '1') then
 			-- Reset go signal
 			go_sig_s <= '0';
