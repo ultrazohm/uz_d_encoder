@@ -28,6 +28,8 @@ entity Resolver_Interface_v1_0 is
         AD2S1210_n_fsync        : OUT STD_LOGIC;   -- synchronization signal (connect to chip)
         AD2S1210_mode_A0        : OUT STD_LOGIC;   -- mode select 0 (connect to chip)
         AD2S1210_mode_A1        : OUT STD_LOGIC;   -- mode select 1 (connect to chip)
+        sample_trigger          : IN STD_LOGIC;   -- Trigger input from PL
+        data_out_m              : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);  
 
 		-- User ports ends
 		-- Do not modify the ports beyond this line
@@ -79,7 +81,9 @@ architecture arch_imp of Resolver_Interface_v1_0 is
 			AD2S1210_n_fsync        : OUT STD_LOGIC;   -- synchronization signal (connect to chip)
 			AD2S1210_mode_A0        : OUT STD_LOGIC;   -- mode select 0 (connect to chip)
 			AD2S1210_mode_A1        : OUT STD_LOGIC;   -- mode select 1 (connect to chip)
-			
+			sample_trigger          : IN STD_LOGIC;   -- Trigger input from PL
+            data_out_m              : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);  
+
 			S_AXI_ACLK		: in std_logic;
 			S_AXI_ARESETN	: in std_logic;
 			S_AXI_AWADDR	: in std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
@@ -125,7 +129,9 @@ Resolver_Interface_v1_0_S00_AXI_inst : Resolver_Interface_v1_0_S00_AXI
         AD2S1210_n_fsync    => AD2S1210_n_fsync,
         AD2S1210_mode_A0    => AD2S1210_mode_A0,
         AD2S1210_mode_A1    => AD2S1210_mode_A1,
-		
+		sample_trigger      => sample_trigger,
+        data_out_m          => data_out_m,
+
 		S_AXI_ACLK		=> s00_axi_aclk,
 		S_AXI_ARESETN	=> s00_axi_aresetn,
 		S_AXI_AWADDR	=> s00_axi_awaddr,

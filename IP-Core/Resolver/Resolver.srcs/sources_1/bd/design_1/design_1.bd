@@ -25,6 +25,7 @@
       "ila_1": "",
       "xlconstant_3": "",
       "AD2S1210_Interface_0": "",
+      "fit_timer_0": "",
       "Resolver_Interface_v_0": ""
     },
     "interface_ports": {
@@ -1193,7 +1194,10 @@
             "value": "Native"
           },
           "C_NUM_OF_PROBES": {
-            "value": "11"
+            "value": "13"
+          },
+          "C_PROBE11_WIDTH": {
+            "value": "16"
           }
         }
       },
@@ -1255,7 +1259,7 @@
                 "value_src": "default_prop"
               },
               "FREQ_HZ": {
-                "value": "1e+08",
+                "value": "100000000",
                 "value_src": "user_prop"
               }
             }
@@ -1335,6 +1339,15 @@
           }
         }
       },
+      "fit_timer_0": {
+        "vlnv": "xilinx.com:ip:fit_timer:2.0",
+        "xci_name": "design_1_fit_timer_0_0",
+        "parameters": {
+          "C_NO_CLOCKS": {
+            "value": "250"
+          }
+        }
+      },
       "Resolver_Interface_v_0": {
         "vlnv": "xilinx.com:module_ref:Resolver_Interface_v1_0:1.0",
         "xci_name": "design_1_Resolver_Interface_v_0_0",
@@ -1358,7 +1371,7 @@
                 "value_src": "constant"
               },
               "FREQ_HZ": {
-                "value": "1e+08",
+                "value": "100000000",
                 "value_src": "user_prop"
               },
               "ID_WIDTH": {
@@ -1591,6 +1604,24 @@
           "AD2S1210_mode_A1": {
             "direction": "O"
           },
+          "sample_trigger": {
+            "direction": "I",
+            "parameters": {
+              "PortWidth": {
+                "value": "1",
+                "value_src": "default_prop"
+              },
+              "SENSITIVITY": {
+                "value": "LEVEL_HIGH",
+                "value_src": "const_prop"
+              }
+            }
+          },
+          "data_out_m": {
+            "direction": "O",
+            "left": "15",
+            "right": "0"
+          },
           "s00_axi_aclk": {
             "type": "clk",
             "direction": "I",
@@ -1608,7 +1639,7 @@
                 "value_src": "default_prop"
               },
               "FREQ_HZ": {
-                "value": "1e+08",
+                "value": "100000000",
                 "value_src": "user_prop"
               }
             }
@@ -1801,6 +1832,7 @@
           "system_ila_0/clk",
           "ila_1/clk",
           "AD2S1210_Interface_0/clock",
+          "fit_timer_0/Clk",
           "Resolver_Interface_v_0/s00_axi_aclk"
         ]
       },
@@ -1853,6 +1885,25 @@
           "xlconstant_3/dout",
           "AD2S1210_Interface_0/register_adr_in",
           "AD2S1210_Interface_0/register_val_in"
+        ]
+      },
+      "rst_ps7_0_100M_peripheral_reset": {
+        "ports": [
+          "rst_ps7_0_100M/peripheral_reset",
+          "fit_timer_0/Rst"
+        ]
+      },
+      "fit_timer_0_Interrupt": {
+        "ports": [
+          "fit_timer_0/Interrupt",
+          "ila_0/probe12",
+          "Resolver_Interface_v_0/sample_trigger"
+        ]
+      },
+      "Resolver_Interface_v_0_data_out_m": {
+        "ports": [
+          "Resolver_Interface_v_0/data_out_m",
+          "ila_0/probe11"
         ]
       }
     },

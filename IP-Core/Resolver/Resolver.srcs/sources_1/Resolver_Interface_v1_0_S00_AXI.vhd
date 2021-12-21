@@ -29,7 +29,10 @@ entity Resolver_Interface_v1_0_S00_AXI is
         AD2S1210_mode_A0        : OUT STD_LOGIC;   -- mode select 0 (connect to chip)
         AD2S1210_mode_A1        : OUT STD_LOGIC;   -- mode select 1 (connect to chip)
 
-		-- User ports ends
+
+        sample_trigger          : IN STD_LOGIC;   -- Trigger input from PL
+        data_out_m              : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);  
+        -- User ports ends
 		-- Do not modify the ports beyond this line
 
 		-- Global Clock Signal
@@ -512,14 +515,23 @@ begin
 	reset_n_s      <= S_AXI_ARESETN AND slv_reg0(7);  -- combine two reset sources
 
 	-- Signals from slave to master
+	
 	busy_m         <= busy_s;
 	error_flag_m   <= error_flag_s;
+
+    -- Make sure only valid data is presented
+    valid_data_process:Process(busy_s)
+    begin
+        if falling_edge(busy_s) then
+            data_out_m     <= data_out_s;
+        end if;
+    end process;
 
 	-- Handle go signal
     go_sig_set_process:Process (slv_reg0(1), busy_s) is
     begin
 
-        if rising_edge (slv_reg0(1)) then
+        if rising_edge (slv_reg0(1)) OR rising_edge(sample_trigger) then
             
 			if (configMode_s = '1') then
 
