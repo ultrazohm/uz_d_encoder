@@ -1,0 +1,82 @@
+#ifndef UZ_ENCODERIP_H
+#define UZ_ENCODERIP_H
+
+// Includes
+#include <stdint.h>
+#include <stdbool.h>
+
+// Typedefs
+
+/**
+ * @brief Data type for object encoderIP
+ *
+ */
+typedef struct uz_encoderIP_t uz_encoderIP_t;
+
+/**
+ * @brief Configuration struct for encoderIP
+ *
+ */
+struct uz_encoderIP_config{
+    uint32_t base_address; /**< Base address of the IP-Core */
+    uint32_t ip_clk_frequency_Hz; /**< Clock frequency of the IP-Core */
+};
+
+/**
+ * @brief Initializes an instance of the encoderIP driver
+ *
+ * @param config Configuration values for the IP-Core
+ * @return Pointer to initialized instance
+ */
+uz_encoderIP_t* uz_encoderIP_init(struct uz_encoderIP_config config);
+
+/**
+ * @brief Sets Resolver in Config Mode for Register Read/Write Operations
+ *
+ * @param self instance of uz_encoderIP_t
+ */
+void uz_encoderIP_setConfigMode(uz_encoderIP_t* self);
+
+/**
+ * @brief Sets Resolver in Velocity Mode for Velocity reading via readData function
+ *
+ * @param self instance of uz_encoderIP_t
+ */
+void uz_encoderIP_setDataModeVelocity(uz_encoderIP_t* self);
+
+/**
+ * @brief Sets Resolver in Position Mode for Position reading via readData function
+ *
+ * @param self instance of uz_encoderIP_t
+ */
+void uz_encoderIP_setDataModePosition(uz_encoderIP_t* self);
+
+/**
+ * @brief Reads Resolver Data: First reading is triggered, then data is read out via SPI
+ *
+ * @param self instance of uz_encoderIP_t
+ *
+ *  @return int32_t Read Data
+ */
+int32_t uz_encoderIP_readData(uz_encoderIP_t* self);
+
+/**
+ * @brief Reads Resolver Register
+ *
+ * @param self instance of uz_encoderIP_t
+ * @param addr Register address
+ *
+ *  @return int32_t Read Register Data
+ */
+int32_t uz_encoderIP_readRegister(uz_encoderIP_t* self, int32_t addr);
+
+/**
+ * @brief Writes Resolver Register
+ *
+ * @param self instance of uz_encoderIP_t
+ * @param addr Register address
+ * @param val Register write value
+ */
+void uz_encoderIP_writeRegister(uz_encoderIP_t* self, int32_t addr, int32_t val);
+
+#endif // UZ_ENCODERIP_H

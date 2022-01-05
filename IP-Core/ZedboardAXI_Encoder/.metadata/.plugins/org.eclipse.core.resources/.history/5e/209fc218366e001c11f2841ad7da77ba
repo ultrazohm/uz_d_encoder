@@ -1,0 +1,738 @@
+//#include "../../uz/uz_global_configuration.h"
+//#if UZ_ENCODERIP_MAX_INSTANCES > 0U
+
+
+
+#include "uz_HAL.h"
+#include "uz_encoderIP_hw.h"
+#include "uz_encoderIP.h"
+
+struct uz_encoderIP_t {
+    bool is_ready;
+    struct uz_encoderIP_config config;
+    int32_t resolution;
+};
+
+static size_t instance_counter = 0U;
+static uz_encoderIP_t instances[1] = { 0 };
+
+
+static uz_encoderIP_t* uz_encoderIP_allocation(void);
+
+static uz_encoderIP_t* uz_encoderIP_allocation(void){
+    uz_assert(instance_counter < 1);
+    uz_encoderIP_t* self = &instances[instance_counter];
+    uz_assert_false(self->is_ready);
+    instance_counter++;
+    self->is_ready = true;
+    return (self);
+}
+
+uz_encoderIP_t* uz_encoderIP_init(struct uz_encoderIP_config config) {
+	 uz_assert(0U != config.base_address);
+	 uz_assert(0U != config.ip_clk_frequency_Hz);
+
+	 uz_encoderIP_t* self = uz_encoderIP_allocation();
+	 self->config=config;
+
+    uz_encoderIP_hw_write_RESCON(self->config.base_address, RESCON_Data_uz_axi_EN_bit | RESCON_Data_uz_axi_nRESET_bit);
+
+    int32_t rescon;
+    do{
+        rescon = uz_encoderIP_hw_read_RESCON(self->config.base_address);
+    } while (rescon & RESCON_Data_uz_axi_BUSY_bit);
+
+    return (self);
+}
+
+
+void uz_encoderIP_setConfigMode(uz_encoderIP_t* self){
+    int32_t rescon = uz_encoderIP_hw_read_RESCON(self->config.base_address);
+    rescon |= RESCON_Data_uz_axi_CMODE_bit;
+    uz_encoderIP_hw_write_RESCON(self->config.base_address, rescon);
+}
+
+void uz_encoderIP_setDataModeVelocity(uz_encoderIP_t* self){
+    int32_t rescon = uz_encoderIP_hw_read_RESCON(self->config.base_address);
+    rescon &= ~(RESCON_Data_uz_axi_CMODE_bit);
+    rescon |= (RESCON_Data_uz_axi_DMODE_bit);
+    uz_encoderIP_hw_write_RESCON(self->config.base_address, rescon);
+}
+
+void uz_encoderIP_setDataModePosition(uz_encoderIP_t* self){
+    int32_t rescon = uz_encoderIP_hw_read_RESCON(self->config.base_address);
+    rescon &= ~(RESCON_Data_uz_axi_CMODE_bit);
+    rescon &= ~(RESCON_Data_uz_axi_DMODE_bit);
+    uz_encoderIP_hw_write_RESCON(self->config.base_address, rescon);
+}
+
+int32_t uz_encoderIP_readData(uz_encoderIP_t* self){
+    int32_t rescon = uz_encoderIP_hw_read_RESCON(self->config.base_address);
+    rescon |= RESCON_Data_uz_axi_GO_bit;
+    uz_encoderIP_hw_write_RESCON(self->config.base_address, rescon);
+    rescon &= ~(RESCON_Data_uz_axi_GO_bit);
+    uz_encoderIP_hw_write_RESCON(self->config.base_address, rescon);
+    do{
+        rescon = uz_encoderIP_hw_read_RESCON(self->config.base_address);
+    } while (rescon & RESCON_Data_uz_axi_BUSY_bit);
+    
+    return uz_encoderIP_hw_read_RESDAT(self->config.base_address);
+}
+
+int32_t uz_encoderIP_readRegister(uz_encoderIP_t* self, int32_t addr){
+    uz_encoderIP_setConfigMode(self);
+
+    int32_t rescon = uz_encoderIP_hw_read_RESCON(self->config.base_address);
+    rescon &= ~(RESCON_Data_uz_axi_RW_bit);
+    uz_encoderIP_hw_write_RESCON(self->config.base_address, rescon);
+
+    uz_encoderIP_hw_write_RESADR(self->config.base_address, addr);
+
+    rescon |= RESCON_Data_uz_axi_GO_bit;
+    uz_encoderIP_hw_write_RESCON(self->config.base_address, rescon);
+    rescon &= ~(RESCON_Data_uz_axi_GO_bit);
+    uz_encoderIP_hw_write_RESCON(self->config.base_address, rescon);
+
+    do{
+        rescon = uz_encoderIP_hw_read_RESCON(self->config.base_address);
+    } while (rescon & RESCON_Data_uz_axi_BUSY_bit);
+    
+    return uz_encoderIP_hw_read_RESRDA(self->config.base_address);
+}
+
+void uz_encoderIP_writeRegister(uz_encoderIP_t* self, int32_t addr, int32_t val){
+    uz_encoderIP_setConfigMode(self);
+
+    int32_t rescon = uz_encoderIP_hw_read_RESCON(self->config.base_address);
+    rescon |= RESCON_Data_uz_axi_RW_bit;
+    uz_encoderIP_hw_write_RESCON(self->config.base_address, rescon);
+
+    uz_encoderIP_hw_write_RESADR(self->config.base_address, addr);
+    uz_encoderIP_hw_write_RESDAT(self->config.base_address, val);
+    
+    rescon |= RESCON_Data_uz_axi_GO_bit;
+    uz_encoderIP_hw_write_RESCON(self->config.base_address, rescon);
+    rescon &= ~(RESCON_Data_uz_axi_GO_bit);
+    uz_encoderIP_hw_write_RESCON(self->config.base_address, rescon);
+
+    do{
+        rescon = uz_encoderIP_hw_read_RESCON(self->config.base_address);
+    } while (rescon & RESCON_Data_uz_axi_BUSY_bit);
+}
+
+/**
+ * @brief Sets Loss Of Signal Threshold of AD2S1210.
+ * From AD2S1210 Datasheet:
+ * The LOS threshold register determines the loss of signal threshold
+ * of the AD2S1210. The AD2S1210 allows the user to set the LOS
+ * threshold to a value between 0 V and 4.82 V. The resolution of
+ * the LOS threshold is seven bits, that is, 38 mV. Note that the MSB,
+ * D7, should be set to 0. The default value of the LOS threshold
+ * on power-up is 2.2 V.
+ *
+ * @param self instance of uz_encoderIP_t
+ * @param thresh Loss Of Signal Threshold of AD2S1210 in Volts. Valid threshold values are in the range [0V, 4.82V]
+ */
+void uz_encoderIP_setLOSThresh(uz_encoderIP_t* self, float thresh){
+
+	uz_assert(thresh <= 4.82);
+	uz_assert(thresh >= 0);
+
+	int32_t addr = 0x88;
+
+	int32_t val = (int) thresh/((1<<7)-1) ;
+	uz_assert(val <= 127);
+	uz_assert(val >= 0);
+
+	uz_encoderIP_writeRegister(uz_encoderIP_t* self, addr, val);
+}
+/**
+ * @brief Returns Loss Of Signal Threshold of AD2S1210 in Volts.
+ * From AD2S1210 Datasheet:
+ * The LOS threshold register determines the loss of signal threshold
+ * of the AD2S1210. The AD2S1210 allows the user to set the LOS
+ * threshold to a value between 0 V and 4.82 V. The resolution of
+ * the LOS threshold is seven bits, that is, 38 mV. Note that the MSB,
+ * D7, should be set to 0. The default value of the LOS threshold
+ * on power-up is 2.2 V.
+ *
+ * @param self instance of uz_encoderIP_t
+ *
+ * @return float Loss Of Signal Threshold of AD2S1210 in Volts
+ *
+ */
+float uz_encoderIP_getLOSThresh(uz_encoderIP_t* self){
+
+	int32_t addr = 0x88;
+	int32_t val = uz_encoderIP_readRegister(uz_encoderIP_t* self, addr);
+
+	uz_assert(val <= 127);
+	uz_assert(val >= 0);
+
+	float val_f = (float) val;
+	float thresh = val_f* 0.038;
+
+	uz_assert(thresh <= 4.82);
+	uz_assert(thresh >= 0);
+
+	return thresh;
+}
+
+/**
+ * @brief Sets Degradation Of Signal Threshold of AD2S1210.
+ * From AD2S1210 Datasheet:
+ * The DOS overrange threshold register determines the degradation
+ * of signal threshold of the AD2S1210. The AD2S1210 allows the
+ * user to set the DOS overrange threshold to a value between 0 V
+ * and 4.82 V. The resolution of the DOS overrange threshold is
+ * 7 bits, that is, 38 mV. The MSB, D7, must be set to 0. The default
+ * value of the DOS overrange threshold on power-up is 4.1 V.
+ *
+ * @param self instance of uz_encoderIP_t
+ * @param thresh Degradation Of Signal Threshold of AD2S1210 in Volts. Valid threshold values are in the range [0V, 4.82V]
+ */
+void uz_encoderIP_setDOSOverrangeThresh(uz_encoderIP_t* self, float thresh){
+
+	uz_assert(thresh <= 4.82);
+	uz_assert(thresh >= 0);
+
+	int32_t addr = 0x89;
+
+	int32_t val = (int) thresh/((1<<7)-1) ;
+	uz_assert(val <= 127);
+	uz_assert(val >= 0);
+
+	uz_encoderIP_writeRegister(uz_encoderIP_t* self, addr, val);
+}
+/**
+ * @brief Returns Degradation Of Signal Threshold of AD2S1210 in Volts.
+ * From AD2S1210 Datasheet:
+ * The DOS overrange threshold register determines the degradation
+ * of signal threshold of the AD2S1210. The AD2S1210 allows the
+ * user to set the DOS overrange threshold to a value between 0 V
+ * and 4.82 V. The resolution of the DOS overrange threshold is
+ * 7 bits, that is, 38 mV. The MSB, D7, must be set to 0. The default
+ * value of the DOS overrange threshold on power-up is 4.1 V. *
+ * @param self instance of uz_encoderIP_t
+ *
+ * @return float Degradation Of Signal Threshold of AD2S1210 in Volts
+ *
+ */
+float uz_encoderIP_getDOSOverrangeThresh(uz_encoderIP_t* self){
+
+	int32_t addr = 0x89;
+	int32_t val = uz_encoderIP_readRegister(uz_encoderIP_t* self, addr);
+
+	uz_assert(val <= 127);
+	uz_assert(val >= 0);
+
+	float val_f = (float) val;
+	float thresh = val_f* 0.038;
+
+	uz_assert(thresh <= 4.82);
+	uz_assert(thresh >= 0);
+
+	return thresh;
+}
+
+/**
+ * @brief Sets Degradation Of Signal Mismatch Threshold of AD2S1210.
+ * From AD2S1210 Datasheet:
+ * The DOS mismatch threshold register determines the signal
+ * mismatch threshold of the AD2S1210. The AD2S1210 allows
+ * the user to set the DOS mismatch threshold to a value between
+ * 0 V and 4.82 V. The resolution of the DOS mismatch threshold
+ * is seven bits, that is, 38 mV. Note that the MSB, D7, should be
+ * set to 0.The default value of the DOS mismatch threshold on
+ * power-up is 380 mV.
+ *
+ * @param self instance of uz_encoderIP_t
+ * @param thresh Degradation Of Signal Mismatch Threshold of AD2S1210 in Volts. Valid threshold values are in the range [0V, 4.82V]
+ */
+void uz_encoderIP_setDOSMismatchThresh(uz_encoderIP_t* self, float thresh){
+
+	uz_assert(thresh <= 4.82);
+	uz_assert(thresh >= 0);
+
+	int32_t addr = 0x8A;
+
+	int32_t val = (int) thresh/((1<<7)-1) ;
+	uz_assert(val <= 127);
+	uz_assert(val >= 0);
+
+	uz_encoderIP_writeRegister(uz_encoderIP_t* self, addr, val);
+}
+
+/**
+ * @brief Returns Degradation Of Signal Mismatch Threshold of AD2S1210 in Volts.
+ * From AD2S1210 Datasheet:
+ * The DOS mismatch threshold register determines the signal
+ * mismatch threshold of the AD2S1210. The AD2S1210 allows
+ * the user to set the DOS mismatch threshold to a value between
+ * 0 V and 4.82 V. The resolution of the DOS mismatch threshold
+ * is seven bits, that is, 38 mV. Note that the MSB, D7, should be
+ * set to 0.The default value of the DOS mismatch threshold on
+ * power-up is 380 mV.
+ *
+ * @param self instance of uz_encoderIP_t
+ *
+ * @return float Degradation Of Signal Mismatch Threshold of AD2S1210 in Volts
+ *
+ */
+float uz_encoderIP_getDOSMismatchThresh(uz_encoderIP_t* self){
+
+	int32_t addr = 0x8A;
+	int32_t val = uz_encoderIP_readRegister(uz_encoderIP_t* self, addr);
+
+	uz_assert(val <= 127);
+	uz_assert(val >= 0);
+
+	float val_f = (float) val;
+	float thresh = val_f* 0.038;
+
+	uz_assert(thresh <= 4.82);
+	uz_assert(thresh >= 0);
+
+	return thresh;
+}
+
+
+/**
+ * @brief Sets Degradation Of Signal Reset Threshold of AD2S1210.
+ * From AD2S1210 Datasheet:
+ * The AD2S1210 continuously stores the minimum and maximum
+ * magnitude of the monitor signal in internal registers. The difference
+ * between the minimum and maximum is calculated to determine if
+ * a DOS mismatch has occurred. The initial values for the minimum
+ * and maximum internal registers must be defined by the user.
+ * When the fault register is cleared, the registers that store the
+ * maximum and minimum amplitudes of the monitor signal
+ * are reset to the values stored in the DOS reset maximum and
+ * minimum threshold registers. The resolution of the DOS reset
+ * maximum and minimum thresholds is seven bits each, that is,
+ * 38 mV. Note that the MSB, D7, should be set to 0. To ensure
+ * correct operation, it is recommended that the DOS reset
+ * minimum threshold register be set to at least 1 LSB less than the
+ * DOS overrange threshold, and the DOS reset maximum threshold
+ * register be set to at least 1 LSB greater than the LOS threshold
+ * register. The default value of the DOS reset minimum threshold
+ * register and the DOS reset maximum threshold register are 3.99 V
+ * and 2.28 V, respectively.
+ *
+ * @param self instance of uz_encoderIP_t
+ * @param min Degradation Of Signal Reset Minimum Threshold of AD2S1210 in Volts. Valid threshold values are in the range [0V, 4.82V]
+ * @param max Degradation Of Signal Reset Maximum Threshold of AD2S1210 in Volts. Valid threshold values are in the range [0V, 4.82V]
+ */
+void uz_encoderIP_setDOSResetMinMax(uz_encoderIP_t* self, float min, float max){
+
+	uz_assert(min <= 4.82);
+	uz_assert(min >= 0);
+
+	uz_assert(max <= 4.82);
+	uz_assert(max >= 0);
+
+	uz_assert(max>min);
+
+	int32_t addrMin = 0x8B;
+	int32_t addrMax = 0x8C;
+
+	int32_t valMin = (int) min/((1<<7)-1) ;
+	uz_assert(valMin <= 127);
+	uz_assert(valMin >= 0);
+
+	uz_encoderIP_writeRegister(uz_encoderIP_t* self, addrMin, valMin);
+
+	int32_t valMax = (int) max/((1<<7)-1) ;
+	uz_assert(valMax <= 127);
+	uz_assert(valMax >= 0);
+
+	uz_encoderIP_writeRegister(uz_encoderIP_t* self, addrMax, valMax);
+}
+
+/**
+ * @brief Returns Degradation Of Signal Reset Minimum Threshold of AD2S1210.
+ * From AD2S1210 Datasheet:
+ * The AD2S1210 continuously stores the minimum and maximum
+ * magnitude of the monitor signal in internal registers. The difference
+ * between the minimum and maximum is calculated to determine if
+ * a DOS mismatch has occurred. The initial values for the minimum
+ * and maximum internal registers must be defined by the user.
+ * When the fault register is cleared, the registers that store the
+ * maximum and minimum amplitudes of the monitor signal
+ * are reset to the values stored in the DOS reset maximum and
+ * minimum threshold registers. The resolution of the DOS reset
+ * maximum and minimum thresholds is seven bits each, that is,
+ * 38 mV. Note that the MSB, D7, should be set to 0. To ensure
+ * correct operation, it is recommended that the DOS reset
+ * minimum threshold register be set to at least 1 LSB less than the
+ * DOS overrange threshold, and the DOS reset maximum threshold
+ * register be set to at least 1 LSB greater than the LOS threshold
+ * register. The default value of the DOS reset minimum threshold
+ * register and the DOS reset maximum threshold register are 3.99 V
+ * and 2.28 V, respectively.
+ *
+ *
+ * @param self instance of uz_encoderIP_t
+ *
+ * @return float Degradation Of Signal Reset Minimum Threshold of AD2S1210 in Volts
+ *
+ */
+float uz_encoderIP_getDOSResetMin(uz_encoderIP_t* self){
+
+	int32_t addrMin = 0x8B;
+
+	int32_t valMin = uz_encoderIP_readRegister(uz_encoderIP_t* self, addrMin);
+
+	uz_assert(valMin <= 127);
+	uz_assert(valMin >= 0);
+
+
+	float valMin_f = (float) valMin;
+	float threshMin = valMin_f* 0.038;
+
+	uz_assert(threshMin <= 4.82);
+	uz_assert(threshMin >= 0);
+
+	return threshMin;
+}
+
+/**
+ * @brief Returns Degradation Of Signal Reset Maximum Threshold of AD2S1210.
+ * From AD2S1210 Datasheet:
+ * The AD2S1210 continuously stores the minimum and maximum
+ * magnitude of the monitor signal in internal registers. The difference
+ * between the minimum and maximum is calculated to determine if
+ * a DOS mismatch has occurred. The initial values for the minimum
+ * and maximum internal registers must be defined by the user.
+ * When the fault register is cleared, the registers that store the
+ * maximum and minimum amplitudes of the monitor signal
+ * are reset to the values stored in the DOS reset maximum and
+ * minimum threshold registers. The resolution of the DOS reset
+ * maximum and minimum thresholds is seven bits each, that is,
+ * 38 mV. Note that the MSB, D7, should be set to 0. To ensure
+ * correct operation, it is recommended that the DOS reset
+ * minimum threshold register be set to at least 1 LSB less than the
+ * DOS overrange threshold, and the DOS reset maximum threshold
+ * register be set to at least 1 LSB greater than the LOS threshold
+ * register. The default value of the DOS reset minimum threshold
+ * register and the DOS reset maximum threshold register are 3.99 V
+ * and 2.28 V, respectively.
+ *
+ *
+ * @param self instance of uz_encoderIP_t
+ *
+ * @return float Degradation Of Signal Reset Maximum Threshold of AD2S1210 in Volts
+ *
+ */
+float uz_encoderIP_getDOSResetMinMax(uz_encoderIP_t* self){
+
+	int32_t addrMax = 0x8C;
+
+	int32_t valMax = uz_encoderIP_readRegister(uz_encoderIP_t* self, addrMax);
+
+	uz_assert(valMax <= 127);
+	uz_assert(valMax >= 0);
+
+	float valMax_f = (float) valMax;
+	float threshMax = valMax_f* 0.038;
+
+	uz_assert(threshMax <= 4.82);
+	uz_assert(threshMax >= 0);
+
+	return threshMax;
+}
+
+/**
+ * @brief Sets Loss Of Tracking High Threshold of AD2S1210.
+ * From AD2S1210 Datasheet:
+ * The LOT high threshold register determines the loss of position
+ * tracking threshold for the AD2S1210. The LOT high threshold is a
+ * 7-bit word. The MSB, D7, must be set to 0. The range of the LOT
+ * high threshold, the LSB size, and the default value of the LOT
+ * high threshold on power-up are dependent on the resolution
+ * setting of the AD2S1210, and are outlined in Table 19.
+ *
+ * @param self instance of uz_encoderIP_t
+ * @param thresh Loss Of Tracking High Threshold of AD2S1210 in degrees
+ */
+void uz_encoderIP_setLOTHighThresh(uz_encoderIP_t* self, float thresh){
+	float rangeMin = 0;
+	float rangeMax;
+	float LSBsize;
+	switch(self->config.resolution){
+		case 10:
+			rangeMax = 45;
+			LSBsize = 0.35;
+			break;
+
+		case 12:
+			rangeMax = 18;
+			LSBsize = 0.14;
+				break;
+
+		case 14:
+			rangeMax = 9;
+			LSBsize = 0.09;
+				break;
+
+		case 16:
+			rangeMax = 9;
+			LSBsize = 0.09;
+				break;
+	}
+
+
+
+	uz_assert(thresh <= rangeMax);
+	uz_assert(thresh >= rangeMin);
+
+	int32_t addr = 0x8D;
+
+	int32_t val = (int) thresh/LSBsize ;
+	uz_assert(val <= 127);
+	uz_assert(val >= 0);
+
+	uz_encoderIP_writeRegister(uz_encoderIP_t* self, addr, val);
+}
+
+/**
+ * @brief Returns Loss Of Tracking High Threshold of AD2S1210 in Volts.
+ * From AD2S1210 Datasheet:
+ * The LOT high threshold register determines the loss of position
+ * tracking threshold for the AD2S1210. The LOT high threshold is a
+ * 7-bit word. The MSB, D7, must be set to 0. The range of the LOT
+ * high threshold, the LSB size, and the default value of the LOT
+ * high threshold on power-up are dependent on the resolution
+ * setting of the AD2S1210, and are outlined in Table 19.
+ *
+ * @param self instance of uz_encoderIP_t
+ *
+ * @return float Loss Of Tracking High Threshold of AD2S1210 in Degrees
+ *
+ */
+float uz_encoderIP_getLOTHighThresh(uz_encoderIP_t* self){
+
+	float rangeMin = 0;
+	float rangeMax;
+	float LSBsize;
+	switch(self->config.resolution){
+		case 10:
+			rangeMax = 45;
+			LSBsize = 0.35;
+			break;
+
+		case 12:
+			rangeMax = 18;
+			LSBsize = 0.14;
+				break;
+
+		case 14:
+			rangeMax = 9;
+			LSBsize = 0.09;
+				break;
+
+		case 16:
+			rangeMax = 9;
+			LSBsize = 0.09;
+				break;
+	}
+
+	int32_t addr = 0x8D;
+	int32_t val = uz_encoderIP_readRegister(uz_encoderIP_t* self, addr);
+
+	uz_assert(val <= 127);
+	uz_assert(val >= 0);
+
+	float val_f = (float) val;
+	float thresh = val_f* LSBsize;
+
+	uz_assert(thresh <= rangeMax);
+	uz_assert(thresh >= rangeMin);
+
+	return thresh;
+}
+
+/**
+ * @brief Sets Loss Of Tracking Low Threshold of AD2S1210.
+ * From AD2S1210 Datasheet:
+ * The LOT low threshold register determines the level of hysteresis
+ * on the loss of position tracking fault detection. Loss of tracking
+ * (LOT) occurs when the internal error signal of the AD2S1210
+ * exceeds the LOT high threshold. LOT has hysteresis and is not
+ * cleared until the internal error signal is less than the value defined
+ * in the LOT low threshold register. The LOT low threshold is a
+ * 7-bit word. The MSB, D7, must be set to 0. The range of the
+ * LOT low threshold, the LSB size, and the default value of the
+ * LOT low threshold on power-up are dependent on the resolution
+ * setting of the AD2S1210 and are outlined in Table 19
+ *
+ * @param self instance of uz_encoderIP_t
+ * @param thresh Loss Of Tracking High Threshold of AD2S1210 in degrees
+ */
+void uz_encoderIP_setLOTLowThresh(uz_encoderIP_t* self, float thresh){
+	float rangeMin = 0;
+	float rangeMax;
+	float LSBsize;
+	switch(self->config.resolution){
+		case 10:
+			rangeMax = 45;
+			LSBsize = 0.35;
+			break;
+
+		case 12:
+			rangeMax = 18;
+			LSBsize = 0.14;
+				break;
+
+		case 14:
+			rangeMax = 9;
+			LSBsize = 0.09;
+				break;
+
+		case 16:
+			rangeMax = 9;
+			LSBsize = 0.09;
+				break;
+	}
+
+
+
+	uz_assert(thresh <= rangeMax);
+	uz_assert(thresh >= rangeMin);
+
+	int32_t addr = 0x8E;
+
+	int32_t val = (int) thresh/LSBsize ;
+	uz_assert(val <= 127);
+	uz_assert(val >= 0);
+
+	uz_encoderIP_writeRegister(uz_encoderIP_t* self, addr, val);
+}
+
+/**
+ * @brief Returns Loss Of Tracking Low Threshold of AD2S1210 in Volts.
+ * From AD2S1210 Datasheet:
+ * The LOT low threshold register determines the level of hysteresis
+ * on the loss of position tracking fault detection. Loss of tracking
+ * (LOT) occurs when the internal error signal of the AD2S1210
+ * exceeds the LOT high threshold. LOT has hysteresis and is not
+ * cleared until the internal error signal is less than the value defined
+ * in the LOT low threshold register. The LOT low threshold is a
+ * 7-bit word. The MSB, D7, must be set to 0. The range of the
+ * LOT low threshold, the LSB size, and the default value of the
+ * LOT low threshold on power-up are dependent on the resolution
+ * setting of the AD2S1210 and are outlined in Table 19
+ *
+ * @param self instance of uz_encoderIP_t
+ *
+ * @return float Loss Of Tracking High Threshold of AD2S1210 in Degrees
+ *
+ */
+float uz_encoderIP_getLOTLowThresh(uz_encoderIP_t* self){
+
+	float rangeMin = 0;
+	float rangeMax;
+	float LSBsize;
+	switch(self->config.resolution){
+		case 10:
+			rangeMax = 45;
+			LSBsize = 0.35;
+			break;
+
+		case 12:
+			rangeMax = 18;
+			LSBsize = 0.14;
+				break;
+
+		case 14:
+			rangeMax = 9;
+			LSBsize = 0.09;
+				break;
+
+		case 16:
+			rangeMax = 9;
+			LSBsize = 0.09;
+				break;
+	}
+
+	int32_t addr = 0x8E;
+	int32_t val = uz_encoderIP_readRegister(uz_encoderIP_t* self, addr);
+
+	uz_assert(val <= 127);
+	uz_assert(val >= 0);
+
+	float val_f = (float) val;
+	float thresh = val_f* LSBsize;
+
+	uz_assert(thresh <= rangeMax);
+	uz_assert(thresh >= rangeMin);
+
+	return thresh;
+}
+
+/**
+ * @brief Sets Excitation Frequency Register of AD2S1210.
+ * From AD2S1210 Datasheet:
+ * The excitation frequency register determines the frequency of
+ * the excitation outputs of the AD2S1210. A 7-bit frequency control
+ * word is written to the register to set the excitation frequency.
+ * The MSB, D7, must be set to 0.
+ * fCW = (Excitation frquency * 2^15) / fCLKIN
+ * where fCW is the frequency control word and fCLKIN is the clock
+ * frequency of the AD2S1210. The specified range of the excitation
+ * frequency is from 2 kHz to 20 kHz and can be set in increments
+ * of 250 Hz. To ensure that the AD2S1210 is operated within the
+ * specified frequency range, the frequency control word should
+ * be a value between 0x4 and 0x50.
+ *
+ * @param self instance of uz_encoderIP_t
+ * @param excFreq Excitation Frequency AD2S1210 in Herz.
+ */
+void uz_encoderIP_setLOSThresh(uz_encoderIP_t* self, float excFreq){
+
+
+	uz_assert(excFreq <= 20000);
+	uz_assert(excFreq >= 2000);
+
+	int32_t addr = 0x91;
+
+	int32_t fCW = (int) excFreq*(2<<15)/self->config.freq_clockin;
+	uz_assert(fCW <= 0x50);
+	uz_assert(fCW >= 0x4);
+
+	uz_encoderIP_writeRegister(uz_encoderIP_t* self, addr, fCW);
+}
+/**
+ * @brief Returns Loss Of Signal Threshold of AD2S1210 in Volts.
+ * From AD2S1210 Datasheet:
+ * The LOS threshold register determines the loss of signal threshold
+ * of the AD2S1210. The AD2S1210 allows the user to set the LOS
+ * threshold to a value between 0 V and 4.82 V. The resolution of
+ * the LOS threshold is seven bits, that is, 38 mV. Note that the MSB,
+ * D7, should be set to 0. The default value of the LOS threshold
+ * on power-up is 2.2 V.
+ *
+ * @param self instance of uz_encoderIP_t
+ *
+ * @return float Loss Of Signal Threshold of AD2S1210 in Volts
+ *
+ */
+float uz_encoderIP_getLOSThresh(uz_encoderIP_t* self){
+
+	int32_t addr = 0x88;
+	int32_t val = uz_encoderIP_readRegister(uz_encoderIP_t* self, addr);
+
+	uz_assert(val <= 127);
+	uz_assert(val >= 0);
+
+	float val_f = (float) val;
+	float thresh = val_f* 0.038;
+
+	uz_assert(thresh <= 4.82);
+	uz_assert(thresh >= 0);
+
+	return thresh;
+}
+
+
+//#endif

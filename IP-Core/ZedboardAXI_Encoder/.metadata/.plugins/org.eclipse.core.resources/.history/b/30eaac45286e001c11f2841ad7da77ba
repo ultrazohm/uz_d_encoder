@@ -1,0 +1,123 @@
+//#include "../../uz/uz_global_configuration.h"
+//#if UZ_ENCODERIP_MAX_INSTANCES > 0U
+
+#include "uz_HAL.h"
+#include "uz_encoderIP_hw.h"
+#include "uz_encoderIP.h"
+#define TEST_BASE_ADDRESS 0x43C00000
+
+struct uz_encoderIP_t {
+    bool is_ready;
+    struct uz_encoderIP_config config;
+};
+
+static size_t instance_counter = 0U;
+static uz_encoderIP_t instances[1] = { 0 };
+
+
+
+static uz_encoderIP_t* uz_encoderIP_allocation(void);
+
+static uz_encoderIP_t* uz_encoderIP_allocation(void){
+    uz_assert(instance_counter < 1);
+    uz_encoderIP_t* self = &instances[instance_counter];
+    uz_assert_false(self->is_ready);
+    instance_counter++;
+    self->is_ready = true;
+    return (self);
+}
+
+uz_encoderIP_t* uz_encoderIP_init(struct uz_encoderIP_config config) {
+	 uz_assert(0U != config.base_address);
+	 uz_assert(0U != config.ip_clk_frequency_Hz);
+
+    uz_encoderIP_t* self = uz_encoderIP_allocation();
+
+    self->config=config;
+
+    uz_encoderIP_hw_write_RESCON(self->config.base_address, RESCON_Data_uz_axi_EN_bit | RESCON_Data_uz_axi_nRESET_bit);
+
+    int32_t rescon;
+    do{
+        rescon = uz_encoderIP_hw_read_RESCON(self->config.base_address);
+    } while (rescon & RESCON_Data_uz_axi_BUSY_bit);
+
+    return (self);
+}
+
+
+void uz_encoderIP_setConfigMode(uz_encoderIP_t* self){
+    int32_t rescon = uz_encoderIP_hw_read_RESCON(self->config.base_address);
+    rescon |= RESCON_Data_uz_axi_CMODE_bit;
+    uz_encoderIP_hw_write_RESCON(self->config.base_address, rescon);
+}
+
+void uz_encoderIP_setDataModeVelocity(uz_encoderIP_t* self){
+    int32_t rescon = uz_encoderIP_hw_read_RESCON(self->config.base_address);
+    rescon &= ~(RESCON_Data_uz_axi_CMODE_bit);
+    rescon |= (RESCON_Data_uz_axi_DMODE_bit);
+    uz_encoderIP_hw_write_RESCON(self->config.base_address, rescon);
+}
+
+void uz_encoderIP_setDataModePosition(uz_encoderIP_t* self){
+    int32_t rescon = uz_encoderIP_hw_read_RESCON(self->config.base_address);
+    rescon &= ~(RESCON_Data_uz_axi_CMODE_bit);
+    rescon &= ~(RESCON_Data_uz_axi_DMODE_bit);
+    uz_encoderIP_hw_write_RESCON(self->config.base_address, rescon);
+}
+
+int32_t uz_encoderIP_readData(uz_encoderIP_t* self){
+    int32_t rescon = uz_encoderIP_hw_read_RESCON(self->config.base_address);
+    rescon |= RESCON_Data_uz_axi_GO_bit;
+    uz_encoderIP_hw_write_RESCON(self->config.base_address, rescon);
+    rescon &= ~(RESCON_Data_uz_axi_GO_bit);
+    uz_encoderIP_hw_write_RESCON(self->config.base_address, rescon);
+    do{
+        rescon = uz_encoderIP_hw_read_RESCON(self->config.base_address);
+    } while (rescon & RESCON_Data_uz_axi_BUSY_bit);
+    
+    return uz_encoderIP_hw_read_RESDAT(self->config.base_address);
+}
+
+int32_t uz_encoderIP_readRegister(uz_encoderIP_t* self, int32_t addr){
+    uz_encoderIP_setConfigMode(self);
+
+    int32_t rescon = uz_encoderIP_hw_read_RESCON(self->config.base_address);
+    rescon &= ~(RESCON_Data_uz_axi_RW_bit);
+    uz_encoderIP_hw_write_RESCON(self->config.base_address, rescon);
+
+    uz_encoderIP_hw_write_RESADR(self->config.base_address, addr);
+
+    rescon |= RESCON_Data_uz_axi_GO_bit;
+    uz_encoderIP_hw_write_RESCON(self->config.base_address, rescon);
+    rescon &= ~(RESCON_Data_uz_axi_GO_bit);
+    uz_encoderIP_hw_write_RESCON(self->config.base_address, rescon);
+
+    do{
+        rescon = uz_encoderIP_hw_read_RESCON(self->config.base_address);
+    } while (rescon & RESCON_Data_uz_axi_BUSY_bit);
+    
+    return uz_encoderIP_hw_read_RESRDA(self->config.base_address);
+}
+
+void uz_encoderIP_writeRegister(uz_encoderIP_t* self, int32_t addr, int32_t val){
+    uz_encoderIP_setConfigMode(self);
+
+    int32_t rescon = uz_encoderIP_hw_read_RESCON(self->config.base_address);
+    rescon |= RESCON_Data_uz_axi_RW_bit;
+    uz_encoderIP_hw_write_RESCON(self->config.base_address, rescon);
+
+    uz_encoderIP_hw_write_RESADR(self->config.base_address, addr);
+    uz_encoderIP_hw_write_RESDAT(self->config.base_address, val);
+    
+    rescon |= RESCON_Data_uz_axi_GO_bit;
+    uz_encoderIP_hw_write_RESCON(self->config.base_address, rescon);
+    rescon &= ~(RESCON_Data_uz_axi_GO_bit);
+    uz_encoderIP_hw_write_RESCON(self->config.base_address, rescon);
+
+    do{
+        rescon = uz_encoderIP_hw_read_RESCON(self->config.base_address);
+    } while (rescon & RESCON_Data_uz_axi_BUSY_bit);
+}
+
+//#endif

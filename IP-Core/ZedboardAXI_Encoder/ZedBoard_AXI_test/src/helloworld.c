@@ -57,6 +57,19 @@
 #include "uz_encoderIP_hw.h"
 #include "xparameters.h"
 #define TEST_BASE_ADDRESS XPAR_RESOLVER_INTERFACE_V_0_BASEADDR // Base Adress of AXI Interface
+
+    	int32_t data;
+    	int32_t addr = 0x91;
+    	int32_t val = 0x92;
+
+
+    	 struct uz_encoderIP_config testconfig={
+    	        .base_address=TEST_BASE_ADDRESS,
+    	        .ip_clk_frequency_Hz=100000000U,
+				.resolution = 16,
+				.freq_clockin = 8000000
+    	    };
+
 int main()
 {
     init_platform();
@@ -64,7 +77,7 @@ int main()
 
     // Init Encoder
     uz_encoderIP_t* myIP;
-    myIP <= uz_encoderIP_init();
+    myIP <= uz_encoderIP_init(testconfig);
 
 
     // Set Velocity Mode
@@ -80,10 +93,10 @@ int main()
     xil_printf("LoopBegin \n\r");
     while (1){
     	// Read Data
-   	int32_t data;
-    	data =  uz_encoderIP_readData(myIP);
-        xil_printf("Data: %u \n\r", data);
-    	usleep(500000);
+    	//int32_t data;
+    	//data =  uz_encoderIP_readData(myIP);
+       // xil_printf("Data: %u \n\r", data);
+    	//usleep(500000);
 
     	// Set Config Mode
     	//usleep(10000000);
@@ -95,18 +108,15 @@ int main()
 
 
     //	Read Register
-    	//int32_t data;
-    	//int32_t addr = 0x88;
-    	//data = uz_encoderIP_readRegister(myIP, addr);
-		//xil_printf("Register %u Data: %u \n\r", addr, data);
-		//usleep(1000000);
+    //	data = uz_encoderIP_readRegister(myIP, addr);
+	//	xil_printf("Register %u Data: %u \n\r", addr, data);
+	//	usleep(1000000);
 
     	//Write Register
     	//int32_t addr = 0x88;
-    	//int32_t val = 0x3A;
-    	//uz_encoderIP_writeRegister(myIP,  addr, val);
-		//xil_printf("Writing to Register %u Value: %u \n\r", addr, val);
-		 //usleep(1000000);
+   // 	uz_encoderIP_writeRegister(myIP,  addr, val);
+	//	xil_printf("Writing to Register %u Value: %u \n\r", addr, val);
+	//	usleep(1000000);
     }
 
 

@@ -298,3 +298,41 @@ timestamp=[2021-12-21 13:18:52], mode=BUILD, duration=0:00:01.341, duration_ms=1
 timestamp=[2021-12-21 13:32:35], mode=PLATFORM_GENERATION, duration=0:00:03.202, duration_ms=3202, data={name=zed}
 timestamp=[2021-12-21 13:32:41], mode=BUILD, duration=0:00:00.459, duration_ms=459, data={name=ZedBoard_AXI_test, configuration=Debug, clean_build=false}
 timestamp=[2021-12-21 13:35:25], mode=BUILD, duration=0:00:01.359, duration_ms=1359, data={name=ZedBoard_AXI_test, configuration=Debug, clean_build=false}
+timestamp=[2021-12-21 14:35:02], mode=BUILD, duration=0:00:02.073, duration_ms=2073, data={name=ZedBoard_AXI_test, configuration=Debug, clean_build=false}
+timestamp=[2021-12-21 14:36:32], mode=BUILD, duration=0:00:01.165, duration_ms=1165, data={name=ZedBoard_AXI_test, configuration=Debug, clean_build=false}
+timestamp=[2021-12-21 14:37:19], mode=BUILD, duration=0:00:01.218, duration_ms=1218, data={name=ZedBoard_AXI_test, configuration=Debug, clean_build=false}
+timestamp=[2021-12-21 14:40:04], mode=BUILD, duration=0:00:01.241, duration_ms=1241, data={name=ZedBoard_AXI_test, configuration=Debug, clean_build=false}
+timestamp=[2021-12-21 15:42:54], mode=PLATFORM_GENERATION, duration=0:00:02.672, duration_ms=2672, data={name=zed}
+timestamp=[2021-12-21 15:43:02], mode=BUILD, duration=0:00:01.662, duration_ms=1662, data={name=ZedBoard_AXI_test, configuration=Debug, clean_build=false}
+timestamp=[2021-12-21 16:15:35], mode=WORKBENCH_START, duration=0:00:33.767, duration_ms=33767, data={}
+timestamp=[2021-12-21 16:15:37], mode=WORKBENCH_UI_INIT, duration=0:00:01.548, duration_ms=1548, data={editors_count=19, platform_editors_count=5, projects_count=4, platform_projects_count=1, active_platform_editor=false, projects=RemoteSystemsTempFiles,ZedBoard_AXI_test,ZedBoard_AXI_test_system,zed}
+timestamp=[2021-12-21 16:15:40], mode=PLATFORM_REPOSITORY_INIT, duration=0:00:00.234, duration_ms=234, data={}
+timestamp=[2021-12-21 16:37:03], mode=PLATFORM_GENERATION, duration=0:00:03.553, duration_ms=3553, data={name=zed}
+timestamp=[2021-12-21 16:45:23], mode=PLATFORM_GENERATION, duration=0:00:02.644, duration_ms=2644, data={name=zed}
+timestamp=[2021-12-21 16:45:24], mode=BUILD, duration=0:00:00.614, duration_ms=614, data={name=ZedBoard_AXI_test, configuration=Debug, clean_build=true}
+timestamp=[2021-12-21 16:45:32], mode=BUILD, duration=0:00:02.860, duration_ms=2860, data={name=ZedBoard_AXI_test, configuration=Debug, clean_build=false}
+timestamp=[2021-12-21 16:47:54], mode=WORKBENCH_START, duration=0:00:15.054, duration_ms=15054, data={}
+timestamp=[2021-12-21 16:47:55], mode=WORKBENCH_UI_INIT, duration=0:00:01.152, duration_ms=1152, data={editors_count=19, platform_editors_count=5, projects_count=4, platform_projects_count=1, active_platform_editor=false, projects=RemoteSystemsTempFiles,ZedBoard_AXI_test,ZedBoard_AXI_test_system,zed}
+timestamp=[2021-12-21 16:47:56], mode=PLATFORM_REPOSITORY_INIT, duration=0:00:00.065, duration_ms=65, data={}
+timestamp=[2022-01-05 12:38:53], mode=WORKBENCH_START, duration=0:00:37.645, duration_ms=37645, data={}
+timestamp=[2022-01-05 12:38:55], mode=WORKBENCH_UI_INIT, duration=0:00:01.538, duration_ms=1538, data={editors_count=19, platform_editors_count=5, projects_count=4, platform_projects_count=1, active_platform_editor=false, projects=RemoteSystemsTempFiles,ZedBoard_AXI_test,ZedBoard_AXI_test_system,zed}
+timestamp=[2022-01-05 12:38:57], mode=PLATFORM_REPOSITORY_INIT, duration=0:00:00.793, duration_ms=793, data={}
+timestamp=[2022-01-05 13:40:49], mode=PLATFORM_GENERATION, duration=0:00:40.891, duration_ms=40891, data={name=zed}
+timestamp=[2022-01-05 13:40:56], mode=BUILD, duration=0:00:01.943, duration_ms=1943, data={name=ZedBoard_AXI_test, configuration=Debug, clean_build=false}
+timestamp=[2022-01-05 13:43:13], mode=BUILD, duration=0:00:01.133, duration_ms=1133, data={name=ZedBoard_AXI_test, configuration=Debug, clean_build=false}
+timestamp=[2022-01-05 13:44:40], mode=BUILD, duration=0:00:01.021, duration_ms=1021, data={name=ZedBoard_AXI_test, configuration=Debug, clean_build=false}
+timestamp=[2022-01-05 13:45:03], mode=BUILD, duration=0:00:01.031, duration_ms=1031, data={name=ZedBoard_AXI_test, configuration=Debug, clean_build=false}
+timestamp=[2022-01-05 13:46:51], mode=BUILD, duration=0:00:01.159, duration_ms=1159, data={name=ZedBoard_AXI_test, configuration=Debug, clean_build=false}
+timestamp=[2022-01-05 13:57:27], mode=BUILD, duration=0:00:00.917, duration_ms=917, data={name=ZedBoard_AXI_test, configuration=Debug, clean_build=false}
+timestamp=[2022-01-05 14:02:26], mode=BUILD, duration=0:00:00.924, duration_ms=924, data={name=ZedBoard_AXI_test, configuration=Debug, clean_build=false}
+timestamp=[2022-01-05 14:03:19], mode=BUILD, duration=0:00:01.364, duration_ms=1364, data={name=ZedBoard_AXI_test, configuration=Debug, clean_build=false}
+timestamp=[2022-01-05 14:03:34], mode=BUILD, duration=0:00:00.717, duration_ms=717, data={name=ZedBoard_AXI_test, configuration=Debug, clean_build=false}
+timestamp=[2022-01-05 14:04:14], mode=BUILD, duration=0:00:00.656, duration_ms=656, data={name=ZedBoard_AXI_test, configuration=Debug, clean_build=false}
+timestamp=[2022-01-05 14:04:44], mode=BUILD, duration=0:00:00.685, duration_ms=685, data={name=ZedBoard_AXI_test, configuration=Debug, clean_build=false}
+timestamp=[2022-01-05 14:05:13], mode=BUILD, duration=0:00:00.737, duration_ms=737, data={name=ZedBoard_AXI_test, configuration=Debug, clean_build=false}
+timestamp=[2022-01-05 14:05:26], mode=BUILD, duration=0:00:01.063, duration_ms=1063, data={name=ZedBoard_AXI_test, configuration=Debug, clean_build=false}
+timestamp=[2022-01-05 14:07:54], mode=BUILD, duration=0:00:01.420, duration_ms=1420, data={name=ZedBoard_AXI_test, configuration=Debug, clean_build=false}
+timestamp=[2022-01-05 16:13:41], mode=BUILD, duration=0:00:02.417, duration_ms=2417, data={name=ZedBoard_AXI_test, configuration=Debug, clean_build=false}
+timestamp=[2022-01-05 16:14:41], mode=BUILD, duration=0:00:00.836, duration_ms=836, data={name=ZedBoard_AXI_test, configuration=Debug, clean_build=false}
+timestamp=[2022-01-05 16:18:15], mode=BUILD, duration=0:00:01.264, duration_ms=1264, data={name=ZedBoard_AXI_test, configuration=Debug, clean_build=false}
+timestamp=[2022-01-05 16:18:50], mode=BUILD, duration=0:00:01.111, duration_ms=1111, data={name=ZedBoard_AXI_test, configuration=Debug, clean_build=false}
