@@ -7,7 +7,7 @@
 struct uz_encoderIP_t {
     bool is_ready;
     struct uz_encoderIP_config config;
-    int32_t resolution;
+    uz_encoderIP_mode mode;
 };
 
 static size_t instance_counter = 0U;
@@ -25,12 +25,12 @@ static uz_encoderIP_t* uz_encoderIP_allocation(void){
     return (self);
 }
 
-uz_encoderIP_t* uz_encoderIP_init(struct uz_encoderIP_config config) {
-	 uz_assert(0U != config.base_address);
-	 uz_assert(0U != config.ip_clk_frequency_Hz);
+uz_encoderIP_t* uz_encoderIP_init(struct uz_encoderIP_config configNew) {
+	 uz_assert(0U != configNew.base_address);
+	 uz_assert(0U != configNew.ip_clk_frequency_Hz);
 
 	 uz_encoderIP_t* self = uz_encoderIP_allocation();
-	 self->config=config;
+	 self->config =configNew;
 
     uz_encoderIP_hw_write_RESCON(self->config.base_address, RESCON_Data_uz_axi_EN_bit | RESCON_Data_uz_axi_nRESET_bit);
 
@@ -39,7 +39,10 @@ uz_encoderIP_t* uz_encoderIP_init(struct uz_encoderIP_config config) {
         rescon = uz_encoderIP_hw_read_RESCON(self->config.base_address);
     } while (rescon & RESCON_Data_uz_axi_BUSY_bit);
 
-    return (self);
+
+    uz_encoderIP_setConfigMode(self);
+
+    return self;
 }
 
 
@@ -47,6 +50,7 @@ void uz_encoderIP_setConfigMode(uz_encoderIP_t* self){
     int32_t rescon = uz_encoderIP_hw_read_RESCON(self->config.base_address);
     rescon |= RESCON_Data_uz_axi_CMODE_bit;
     uz_encoderIP_hw_write_RESCON(self->config.base_address, rescon);
+    self->mode = CONFIG_MODE;
 }
 
 void uz_encoderIP_setDataModeVelocity(uz_encoderIP_t* self){
@@ -54,6 +58,7 @@ void uz_encoderIP_setDataModeVelocity(uz_encoderIP_t* self){
     rescon &= ~(RESCON_Data_uz_axi_CMODE_bit);
     rescon |= (RESCON_Data_uz_axi_DMODE_bit);
     uz_encoderIP_hw_write_RESCON(self->config.base_address, rescon);
+    self->mode = VELOCITY_MODE;
 }
 
 void uz_encoderIP_setDataModePosition(uz_encoderIP_t* self){
@@ -61,6 +66,7 @@ void uz_encoderIP_setDataModePosition(uz_encoderIP_t* self){
     rescon &= ~(RESCON_Data_uz_axi_CMODE_bit);
     rescon &= ~(RESCON_Data_uz_axi_DMODE_bit);
     uz_encoderIP_hw_write_RESCON(self->config.base_address, rescon);
+    self->mode = POSITION_MODE;
 }
 
 int32_t uz_encoderIP_readData(uz_encoderIP_t* self){
@@ -120,12 +126,12 @@ void uz_encoderIP_writeRegister(uz_encoderIP_t* self, int32_t addr, int32_t val)
 
 void uz_encoderIP_setLOSThresh(uz_encoderIP_t* self, float thresh){
 
-	uz_assert(thresh <= 4.82);
-	uz_assert(thresh >= 0);
+	uz_assert(thresh <= 4.82f);
+	uz_assert(thresh >= 0.f);
 
 	int32_t addr = 0x88;
 
-	int32_t val = (int) thresh/((1<<7)-1) ;
+	int32_t val = (int) (thresh/0.038f);
 	uz_assert(val <= 127);
 	uz_assert(val >= 0);
 
@@ -141,10 +147,10 @@ float uz_encoderIP_getLOSThresh(uz_encoderIP_t* self){
 	uz_assert(val >= 0);
 
 	float val_f = (float) val;
-	float thresh = val_f* 0.038;
+	float thresh = val_f* 0.038f;
 
-	uz_assert(thresh <= 4.82);
-	uz_assert(thresh >= 0);
+	uz_assert(thresh <= 4.82f);
+	uz_assert(thresh >= 0.f);
 
 	return thresh;
 }
@@ -152,12 +158,12 @@ float uz_encoderIP_getLOSThresh(uz_encoderIP_t* self){
 
 void uz_encoderIP_setDOSOverrangeThresh(uz_encoderIP_t* self, float thresh){
 
-	uz_assert(thresh <= 4.82);
-	uz_assert(thresh >= 0);
+	uz_assert(thresh <= 4.82f);
+	uz_assert(thresh >= 0.f);
 
 	int32_t addr = 0x89;
 
-	int32_t val = (int) thresh/((1<<7)-1) ;
+	int32_t val = (int) (thresh/0.038f) ;
 	uz_assert(val <= 127);
 	uz_assert(val >= 0);
 
@@ -173,22 +179,22 @@ float uz_encoderIP_getDOSOverrangeThresh(uz_encoderIP_t* self){
 	uz_assert(val >= 0);
 
 	float val_f = (float) val;
-	float thresh = val_f* 0.038;
+	float thresh = val_f* 0.038f;
 
-	uz_assert(thresh <= 4.82);
-	uz_assert(thresh >= 0);
+	uz_assert(thresh <= 4.82f);
+	uz_assert(thresh >= 0.f);
 
 	return thresh;
 }
 
 void uz_encoderIP_setDOSMismatchThresh(uz_encoderIP_t* self, float thresh){
 
-	uz_assert(thresh <= 4.82);
-	uz_assert(thresh >= 0);
+	uz_assert(thresh <= 4.82f);
+	uz_assert(thresh >= 0.f);
 
 	int32_t addr = 0x8A;
 
-	int32_t val = (int) thresh/((1<<7)-1) ;
+	int32_t val = (int) (thresh/0.038f) ;
 	uz_assert(val <= 127);
 	uz_assert(val >= 0);
 
@@ -204,39 +210,28 @@ float uz_encoderIP_getDOSMismatchThresh(uz_encoderIP_t* self){
 	uz_assert(val >= 0);
 
 	float val_f = (float) val;
-	float thresh = val_f* 0.038;
+	float thresh = val_f* 0.038f;
 
-	uz_assert(thresh <= 4.82);
-	uz_assert(thresh >= 0);
+	uz_assert(thresh <= 4.82f);
+	uz_assert(thresh >= 0.f);
 
 	return thresh;
 }
 
 
-void uz_encoderIP_setDOSResetMinMax(uz_encoderIP_t* self, float min, float max){
+void uz_encoderIP_setDOSResetMin(uz_encoderIP_t* self, float min){
 
-	uz_assert(min <= 4.82);
-	uz_assert(min >= 0);
+	uz_assert(min <= 4.82f);
+	uz_assert(min >= 0.f);
 
-	uz_assert(max <= 4.82);
-	uz_assert(max >= 0);
-
-	uz_assert(max>min);
 
 	int32_t addrMin = 0x8B;
-	int32_t addrMax = 0x8C;
 
-	int32_t valMin = (int) min/((1<<7)-1) ;
+	int32_t valMin = (int) (min/0.038f);
 	uz_assert(valMin <= 127);
 	uz_assert(valMin >= 0);
 
 	uz_encoderIP_writeRegister(self, addrMin, valMin);
-
-	int32_t valMax = (int) max/((1<<7)-1) ;
-	uz_assert(valMax <= 127);
-	uz_assert(valMax >= 0);
-
-	uz_encoderIP_writeRegister(self, addrMax, valMax);
 }
 
 float uz_encoderIP_getDOSResetMin(uz_encoderIP_t* self){
@@ -250,15 +245,34 @@ float uz_encoderIP_getDOSResetMin(uz_encoderIP_t* self){
 
 
 	float valMin_f = (float) valMin;
-	float threshMin = valMin_f* 0.038;
+	float threshMin = valMin_f* 0.038f;
 
-	uz_assert(threshMin <= 4.82);
-	uz_assert(threshMin >= 0);
+	uz_assert(threshMin <= 4.82f);
+	uz_assert(threshMin >= 0.f);
 
 	return threshMin;
 }
 
-float uz_encoderIP_getDOSResetMinMax(uz_encoderIP_t* self){
+
+void uz_encoderIP_setDOSResetMax(uz_encoderIP_t* self, float max){
+
+
+
+	uz_assert(max <= 4.82f);
+	uz_assert(max >= 0.f);
+
+
+	int32_t addrMax = 0x8C;
+
+
+	int32_t valMax = (int) (max/0.038f) ;
+	uz_assert(valMax <= 127);
+	uz_assert(valMax >= 0);
+
+	uz_encoderIP_writeRegister(self, addrMax, valMax);
+}
+
+float uz_encoderIP_getDOSResetMax(uz_encoderIP_t* self){
 
 	int32_t addrMax = 0x8C;
 
@@ -268,10 +282,10 @@ float uz_encoderIP_getDOSResetMinMax(uz_encoderIP_t* self){
 	uz_assert(valMax >= 0);
 
 	float valMax_f = (float) valMax;
-	float threshMax = valMax_f* 0.038;
+	float threshMax = valMax_f* 0.038f;
 
-	uz_assert(threshMax <= 4.82);
-	uz_assert(threshMax >= 0);
+	uz_assert(threshMax <= 4.82f);
+	uz_assert(threshMax >= 0.f);
 
 	return threshMax;
 }
@@ -310,7 +324,7 @@ void uz_encoderIP_setLOTHighThresh(uz_encoderIP_t* self, float thresh){
 
 	int32_t addr = 0x8D;
 
-	int32_t val = (int) thresh/LSBsize ;
+	int32_t val = (int) (thresh/LSBsize) ;
 	uz_assert(val <= 127);
 	uz_assert(val >= 0);
 
@@ -392,7 +406,7 @@ void uz_encoderIP_setLOTLowThresh(uz_encoderIP_t* self, float thresh){
 
 	int32_t addr = 0x8E;
 
-	int32_t val = (int) thresh/LSBsize ;
+	int32_t val = (int) (thresh/LSBsize) ;
 	uz_assert(val <= 127);
 	uz_assert(val >= 0);
 
@@ -449,7 +463,7 @@ void uz_encoderIP_setExcitationFrequency(uz_encoderIP_t* self, float excFreq){
 
 	int32_t addr = 0x91;
 
-	int32_t fCW = (int) excFreq*(1<<15)/self->config.freq_clockin;
+	int32_t fCW = (int) (excFreq*(1<<15)/self->config.freq_clockin);
 	uz_assert(fCW <= 0x50);
 	uz_assert(fCW >= 0x4);
 

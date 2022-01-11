@@ -67,7 +67,7 @@
     	        .base_address=TEST_BASE_ADDRESS,
     	        .ip_clk_frequency_Hz=100000000U,
 				.resolution = 16,
-				.freq_clockin = 8000000
+				.freq_clockin = 8000000U
     	    };
 
 int main()
@@ -77,7 +77,7 @@ int main()
 
     // Init Encoder
     uz_encoderIP_t* myIP;
-    myIP <= uz_encoderIP_init(testconfig);
+    myIP = uz_encoderIP_init(testconfig);
 
 
     // Set Velocity Mode
@@ -104,9 +104,6 @@ int main()
     	//xil_printf("Config Mode \n\r");
 
 
-
-
-
     //	Read Register
     //	data = uz_encoderIP_readRegister(myIP, addr);
 	//	xil_printf("Register %u Data: %u \n\r", addr, data);
@@ -117,6 +114,102 @@ int main()
    // 	uz_encoderIP_writeRegister(myIP,  addr, val);
 	//	xil_printf("Writing to Register %u Value: %u \n\r", addr, val);
 	//	usleep(1000000);
+    	usleep(1000000);
+    	float LOSThresh =  uz_encoderIP_getLOSThresh(myIP);
+    	printf("Register LOSThresh Value: %f \n\r", LOSThresh);
+    	float LOSThreshNew =  2.0;
+    	uz_encoderIP_setLOSThresh(myIP,LOSThreshNew);
+    	printf("Writing LOSThresh Value: %f \n\r", LOSThreshNew);
+    	float LOSThresh1 =  uz_encoderIP_getLOSThresh(myIP);
+    	printf("Register LOSThresh Value: %f \n\r", LOSThresh1);
+    	usleep(1000000);
+
+    	float DOSOver = uz_encoderIP_getDOSOverrangeThresh(myIP);
+    	printf("Register DOSOverrange Value: %f \n\r", DOSOver);
+    	float DOSOverNew =  4.0f;
+    	uz_encoderIP_setDOSOverrangeThresh(myIP,DOSOverNew);
+    	printf("Writing DOSOverrange Value: %f \n\r", DOSOverNew);
+    	float DOSOver1 = uz_encoderIP_getDOSOverrangeThresh(myIP);
+    	printf("Register DOSOverrange Value: %f \n\r", DOSOver1);
+    	usleep(1000000);
+
+
+
+    	float DOSMismatch = uz_encoderIP_getDOSMismatchThresh(myIP);
+    	printf("Register DOSMismatch Value: %f \n\r", DOSMismatch);
+    	float DOSMisNew =  0.45f;
+    	uz_encoderIP_setDOSMismatchThresh(myIP,DOSMisNew);
+    	printf("Writing DOSMismatch Value: %f \n\r", DOSMisNew);
+    	float DOSMismatch1 = uz_encoderIP_getDOSMismatchThresh(myIP);
+    	printf("Register DOSMismatch Value: %f \n\r", DOSMismatch1);
+    	usleep(1000000);
+
+    	float DOSResetMin = uz_encoderIP_getDOSResetMin(myIP);
+    	printf("Register DOSResetMin Value: %f \n\r", DOSResetMin);
+    	float DOSResetMinNew =  2.0f;
+    	uz_encoderIP_setDOSResetMin(myIP,DOSResetMinNew);
+    	printf("Writing DOSResetMin Value: %f \n\r", DOSResetMinNew);
+    	float DOSResetMin1 = uz_encoderIP_getDOSResetMin(myIP);
+    	printf("Register DOSResetMin Value: %f \n\r", DOSResetMin1);
+    	usleep(1000000);
+
+
+
+    	float DOSResetMax = uz_encoderIP_getDOSResetMax(myIP);
+    	printf("Register DOSResetMax Value: %f \n\r", DOSResetMax);
+    	float DOSResetMaxNew =  3.5f;
+    	uz_encoderIP_setDOSResetMax(myIP,DOSResetMaxNew);
+    	printf("Writing DOSResetMax Value: %f \n\r", DOSResetMaxNew);
+    	float DOSResetMax1 = uz_encoderIP_getDOSResetMax(myIP);
+    	printf("Register DOSResetMax Value: %f \n\r", DOSResetMax1);
+    	usleep(1000000);
+
+
+
+    	float LOTHighThresh = uz_encoderIP_getLOTHighThresh(myIP);
+    	printf("Register LOTHighThresh Value: %f \n\r", LOTHighThresh);
+    	float LOTHighNew =  3.5f;
+    	uz_encoderIP_setLOTHighThresh(myIP,LOTHighNew);
+    	printf("Writing LOTHighThresh Value: %f \n\r", LOTHighNew);
+    	float LOTHighThresh1 = uz_encoderIP_getLOTHighThresh(myIP);
+    	printf("Register LOTHighThresh Value: %f \n\r", LOTHighThresh1);
+    	usleep(1000000);
+
+
+
+    	float LOTLowThresh = uz_encoderIP_getLOTLowThresh(myIP);
+    	printf("Register LOTLowThresh Value: %f \n\r", LOTLowThresh);
+    	float LOTLowNew =  0.6f;
+    	uz_encoderIP_setLOTLowThresh(myIP,LOTLowNew);
+    	printf("Writing LOTLowThresh Value: %f \n\r", LOTLowNew);
+    	float LOTLowThresh1 = uz_encoderIP_getLOTLowThresh(myIP);
+    	printf("Register LOTLowThresh Value: %f \n\r", LOTLowThresh1);
+    	usleep(1000000);
+
+
+
+    	float ExcitationFreq = uz_encoderIP_getExcitationFrequency(myIP);
+    	printf("Register ExcitationFreq Value: %f \n\r", ExcitationFreq);
+    	float ExcitationFreqNew =  8000;
+    	uz_encoderIP_setExcitationFrequency(myIP,ExcitationFreqNew);
+    	printf("Writing ExcitationFreq Value: %f \n\r", ExcitationFreqNew);
+    	float ExcitationFreq1 = uz_encoderIP_getExcitationFrequency(myIP);
+    	printf("Register ExcitationFreq Value: %f \n\r", ExcitationFreq1);
+    	usleep(1000000);
+
+    	float CTRLReg = uz_encoderIP_getCTRLReg(myIP);
+    	printf("Register CTRLReg Value: %f \n\r", CTRLReg);
+    	int32_t CTRLRRegNew =  94;
+    	uz_encoderIP_setCTRLReg(myIP,CTRLRRegNew);
+    	printf("Writing CTRLRReg Value: %u \n\r", CTRLRRegNew);
+    	float CTRLReg1 = uz_encoderIP_getCTRLReg(myIP);
+    	printf("Register CTRLReg Value: %f \n\r", CTRLReg1);
+    	usleep(1000000);
+
+    	int32_t FLTRegister = uz_encoderIP_getFLTRegister(myIP);
+    	printf("Register FLTRegister Value: %u \n\r", FLTRegister);
+    	usleep(1000000);
+
     }
 
 

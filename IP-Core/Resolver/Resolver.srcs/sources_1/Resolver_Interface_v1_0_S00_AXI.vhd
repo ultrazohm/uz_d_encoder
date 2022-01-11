@@ -530,10 +530,11 @@ begin
 	-- Handle go signal
     go_sig_set_process:Process (slv_reg0(1), busy_s) is
     begin
-
-        if rising_edge (slv_reg0(1)) OR rising_edge(sample_trigger) then
+        if (configMode_s = '1') then -- in Config Mode ignore sample_trigger
+        
+            if rising_edge (slv_reg0(1)) then
             
-			if (configMode_s = '1') then
+			
 
 				-- Copy register address
 				register_adr_in_s <= slv_reg2(7 downto 0);
@@ -543,12 +544,19 @@ begin
 					register_val_in_s <= slv_reg1(7 downto 0);
 				end if;
 
-			end if;
+			
 
-			-- Start operation by setting go signal
-			go_sig_s <= '1';
+			     -- Start operation by setting go signal
+			     go_sig_s <= '1';
             
+            end if;
+        else -- in Data Mode donot ignore sample_trigger
+            if rising_edge (slv_reg0(1)) OR rising_edge(sample_trigger) then
+                 -- Start operation by setting go signal
+			     go_sig_s <= '1';
+            end if;
 		end if;
+		
 
         if (busy_s = '1') then
 			-- Reset go signal

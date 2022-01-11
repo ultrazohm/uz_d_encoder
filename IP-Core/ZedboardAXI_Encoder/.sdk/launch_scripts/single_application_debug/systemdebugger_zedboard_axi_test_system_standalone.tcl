@@ -14,5 +14,4 @@ ps7_post_config
 targets -set -nocase -filter {name =~ "*A9*#0"}
 dow C:/Users/FelixKaiser/Documents/3_EAL_Playground/ZedboardAXI_Encoder/ZedBoard_AXI_test/Debug/ZedBoard_AXI_test.elf
 configparams force-mem-access 0
-targets -set -nocase -filter {name =~ "*A9*#0"}
-con
+bpadd -addr &main

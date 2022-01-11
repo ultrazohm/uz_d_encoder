@@ -32,6 +32,16 @@ struct uz_encoderIP_config{
     float freq_clockin; /**< External Clock of AD2S1210. Determined by Crystall Freqency */
 };
 
+/**
+ * @brief Mode enum for encoderIP
+ *
+ */
+typedef enum
+{
+    POSITION_MODE,/**< Position Mode of AD2S1210 */
+	VELOCITY_MODE,/**< Velocity Mode of AD2S1210 */
+	CONFIG_MODE/**< Config Mode of AD2S1210 */
+} uz_encoderIP_mode;
 /*********************
  *
  * LowLevelFunctions
@@ -221,10 +231,36 @@ float uz_encoderIP_getDOSMismatchThresh(uz_encoderIP_t* self);
  * and 2.28 V, respectively.
  *
  * @param self instance of uz_encoderIP_t
- * @param min Degradation Of Signal Reset Minimum Threshold of AD2S1210 in Volts. Valid threshold values are in the range [0V, 4.82V]
- * @param max Degradation Of Signal Reset Maximum Threshold of AD2S1210 in Volts. Valid threshold values are in the range [0V, 4.82V]
+  * @param max Degradation Of Signal Reset Maximum Threshold of AD2S1210 in Volts. Valid threshold values are in the range [0V, 4.82V]
  */
-void uz_encoderIP_setDOSResetMinMax(uz_encoderIP_t* self, float min, float max);
+void uz_encoderIP_setDOSResetMax(uz_encoderIP_t* self, float max);
+
+/**
+ * @brief Sets Degradation Of Signal Reset Threshold of AD2S1210.
+ * From AD2S1210 Datasheet:
+ * The AD2S1210 continuously stores the minimum and maximum
+ * magnitude of the monitor signal in internal registers. The difference
+ * between the minimum and maximum is calculated to determine if
+ * a DOS mismatch has occurred. The initial values for the minimum
+ * and maximum internal registers must be defined by the user.
+ * When the fault register is cleared, the registers that store the
+ * maximum and minimum amplitudes of the monitor signal
+ * are reset to the values stored in the DOS reset maximum and
+ * minimum threshold registers. The resolution of the DOS reset
+ * maximum and minimum thresholds is seven bits each, that is,
+ * 38 mV. Note that the MSB, D7, should be set to 0. To ensure
+ * correct operation, it is recommended that the DOS reset
+ * minimum threshold register be set to at least 1 LSB less than the
+ * DOS overrange threshold, and the DOS reset maximum threshold
+ * register be set to at least 1 LSB greater than the LOS threshold
+ * register. The default value of the DOS reset minimum threshold
+ * register and the DOS reset maximum threshold register are 3.99 V
+ * and 2.28 V, respectively.
+ *
+ * @param self instance of uz_encoderIP_t
+ * @param min Degradation Of Signal Reset Maximum Threshold of AD2S1210 in Volts. Valid threshold values are in the range [0V, 4.82V]
+ */
+void uz_encoderIP_setDOSResetMin(uz_encoderIP_t* self, float min);
 
 /**
  * @brief Returns Degradation Of Signal Reset Minimum Threshold of AD2S1210.
@@ -284,7 +320,7 @@ float uz_encoderIP_getDOSResetMin(uz_encoderIP_t* self);
  * @return float Degradation Of Signal Reset Maximum Threshold of AD2S1210 in Volts
  *
  */
-float uz_encoderIP_getDOSResetMinMax(uz_encoderIP_t* self);
+float uz_encoderIP_getDOSResetMax(uz_encoderIP_t* self);
 
 /**
  * @brief Sets Loss Of Tracking High Threshold of AD2S1210.
