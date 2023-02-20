@@ -1,0 +1,12 @@
+Output: NC Drill Files
+Type  : NC Drill
+From  : PCB Document [UZ_D_Encoder.PcbDoc]
+   Generated File[UZ_D_Encoder.TXT]
+   Generated File[UZ_D_Encoder.LDP]
+   Generated File[UZ_D_Encoder.DRR]
+
+
+Files Generated   : 3
+Documents Printed : 0
+
+Finished Output Generation At 17:14:35 On 23.12.2021
